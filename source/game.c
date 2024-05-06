@@ -12,8 +12,9 @@ static void Init(void) {
 	Map_Init(&game.map, 32, 32);
 	GFX_LoadImage(&game.map.skybox, "assets/sky.bmp");
 
-	game.camDir = 0.0;
-	game.camera = (FVec2) {12.0, 16.0};
+	game.camera.pos  = (FVec3) {12.0, 16.0, 0.5};
+	game.camera.dirH = 0.0;
+	game.camera.dirV = 0.0;
 }
 
 static void Free(void) {
@@ -21,11 +22,42 @@ static void Free(void) {
 }
 
 static void Update(void) {
-	game.camDir += 0.5;
+	const uint8_t* keyState = SDL_GetKeyboardState(NULL);
+
+	if (keyState[SDL_SCANCODE_W]) {
+		game.camera.pos.x += cos(DegToRad(game.camera.dirH)) * 0.1;
+		game.camera.pos.y += sin(DegToRad(game.camera.dirH)) * 0.1;
+	}
+	if (keyState[SDL_SCANCODE_A]) {
+		game.camera.pos.x += cos(DegToRad(game.camera.dirH - 90)) * 0.1;
+		game.camera.pos.y += sin(DegToRad(game.camera.dirH - 90)) * 0.1;
+	}
+	if (keyState[SDL_SCANCODE_S]) {
+		game.camera.pos.x += cos(DegToRad(game.camera.dirH + 180)) * 0.1;
+		game.camera.pos.y += sin(DegToRad(game.camera.dirH + 180)) * 0.1;
+	}
+	if (keyState[SDL_SCANCODE_D]) {
+		game.camera.pos.x += cos(DegToRad(game.camera.dirH + 90)) * 0.1;
+		game.camera.pos.y += sin(DegToRad(game.camera.dirH + 90)) * 0.1;
+	}
+	if (keyState[SDL_SCANCODE_LEFT]) {
+		game.camera.dirH -= 3.0;
+
+		while (game.camera.dirH < -180) {
+			game.camera.dirH += 360.0;
+		}
+	}
+	if (keyState[SDL_SCANCODE_RIGHT]) {
+		game.camera.dirH += 3.0;
+
+		while (game.camera.dirH > 180) {
+			game.camera.dirH -= 360;
+		}
+	}
 }
 
 static void Render(GFX_Canvas* canvas) {
-	Map_Render(&game.map, canvas, game.camera, game.camDir);
+	Map_Render(&game.map, canvas, game.camera);
 }
 
 static void HandleEvent(SDL_Event* e) {

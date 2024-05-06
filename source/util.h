@@ -9,5 +9,6 @@ double RadToDeg(double rad);
 double DegToRad(double deg);
 double CosDeg(double deg);
 double SinDeg(double deg);
+double Lerp(double a, double b, double t);
 
 #endif

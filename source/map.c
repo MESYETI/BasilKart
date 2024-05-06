@@ -1,12 +1,15 @@
 #include "map.h"
 #include "safe.h"
 #include "util.h"
+#include "game.h"
 #include "types.h"
 #include "constants.h"
 #include "gfx/image.h"
 
+static const int centerY = APP_WIN_HEIGHT / 2;
+static double    maxDist = 100;
+
 static double rayDirMap[APP_WIN_WIDTH];
-static GFX_Canvas testSprite;
 
 void Map_Init(Map* map, int width, int height) {
 	map->width  = width;
@@ -19,8 +22,9 @@ void Map_Init(Map* map, int width, int height) {
 		));
 	}
 
+	printf("0 = %f\n", rayDirMap[0]);
+
 	GFX_LoadImage(&map->texture, "assets/tiles.bmp");
-	GFX_LoadImage(&testSprite, "test.bmp");
 
 	map->tiles = SafeMalloc(sizeof(MapTile) * width * height);
 
@@ -85,27 +89,77 @@ MapTile* Map_GetTile(Map* map, int x, int y) {
 	return &map->tiles[(y * map->width) + x];
 }
 
-void Map_DrawSprite(GFX_Canvas* canvas, FVec2 camera, double camDir, MapSprite* sprite) {
-	double angle  = RadToDeg(atan2(camera.y - sprite->y, camera.x - sprite->x));
-	angle        += camDir;
+static GFX_Pixel FogifyPixel(GFX_Pixel pixel, double distance) {
+	GFX_Pixel fogColour = GFX_ColourToPixel(0x24, 0x9F, 0xDE, 0xFF);
+	double    fogDist   = maxDist;
+	double    fog       = distance / fogDist;
+
+	if (fog > 1) {
+		fog = 1;
+	}
+
+	fog  = 1 - fog;
+	fog *= fog;
+	return GFX_LerpPixel(fogColour, pixel, fog);
 }
 
-void Map_Render(Map* map, GFX_Canvas* canvas, FVec2 camera, double camDir) {
-	int horizon = (APP_WIN_HEIGHT / 2) - (APP_WIN_HEIGHT / 8);
+void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
+	double angle  = RadToDeg(atan2(sprite->y - camera.pos.y, sprite->x - camera.pos.x));
+	angle        -= camera.dirH;
+
+	while (angle < -180) angle += 360;
+	while (angle >= 180) angle -= 360;
+
+	if ((angle > 45.0) || (angle < -45.0)) return;
+
+	double distance = sqrt(
+		pow(camera.pos.y - sprite->y, 2) + pow(camera.pos.x - sprite->x, 2)
+	);
+
+	int x = (int) RadToDeg(
+		tan(DegToRad(angle)) *
+		DegToRad(APP_WIN_WIDTH / 2 / tan(DegToRad(APP_FOV / 2)))
+	) + APP_WIN_WIDTH / 2; // complicated math by lurnie
+
+	// Fix fisheye
+	distance *= CosDeg(rayDirMap[x]);
+
+	double h = 1;
+	// height of sprite in the world, 1 is player height, 0.5 is half player height...
+	double z = 0; // z position of sprite in the world, 0 is on the ground (player feet),
+	             // 0.5 is in the center of the screen...
+	//double unit = (double) canvas->height / distance;
+	double unit = (double) centerY * 2 / distance;
+
+	GFX_Point lineStart = {
+		(int) x, round((double) centerY - (h - camera.pos.z + z) * unit) + camera.dirV
+	};
+
+	GFX_VLine(
+		canvas, x, lineStart.y, round(unit * h),
+		FogifyPixel(GFX_ColourToPixel(255, 255, 255, 255), distance)
+	);
+}
+
+void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
+	// draw skybox
+	GFX_Rect skyboxDest = {0, 0, 320, APP_WIN_HEIGHT}; /* draw on entire window temporarily */
+	GFX_Rect skyboxSrc  = {0, 0, 320, 92};
+	GFX_BlitCanvas(canvas, &map->skybox, &skyboxDest, &skyboxSrc);
 
 	for (size_t x = 0; x < APP_WIN_WIDTH; ++ x) {
-		for (int y = 0; y < APP_WIN_HEIGHT - horizon; ++ y) {
-			double direction = rayDirMap[x] + camDir;
-			double distance  = ((double) (horizon)) / ((double) y);
-			distance        /= CosDeg(camDir - direction);
+		for (int y = 0; y <= centerY - camera.dirV; ++ y) {
+			double direction = rayDirMap[x] + camera.dirH;
+			double distance  = ((double) (APP_WIN_HEIGHT)) / ((double) y) * (camera.pos.z);
+			distance        /= CosDeg(camera.dirH - direction);
 
-			if (distance > 100) {
+			if (distance > maxDist) {
 				continue;
 			}
 
 			FVec2 pixelPos = {
-				CosDeg(direction) * distance + camera.x + 0.5,
-				SinDeg(direction) * distance + camera.y + 0.5
+				CosDeg(direction) * distance + camera.pos.x + 0.5,
+				SinDeg(direction) * distance + camera.pos.y + 0.5
 			};
 			Vec2 tilePos = {
 				floor(pixelPos.x), floor(pixelPos.y)
@@ -115,7 +169,7 @@ void Map_Render(Map* map, GFX_Canvas* canvas, FVec2 camera, double camDir) {
 				pixelPos.x - ((double) tilePos.x),
 				pixelPos.y - ((double) tilePos.y)
 			};
-			Vec2 pixel      = {x, y + (horizon)};
+			Vec2 pixel      = {x, y + (centerY) - 1 + camera.dirV};
 			Vec2 pixelIndex = {
 				(int) (tilePixel.x * ((double) APP_TILE_WIDTH)),
 				(int) (tilePixel.y * ((double) APP_TILE_HEIGHT))
@@ -138,13 +192,29 @@ void Map_Render(Map* map, GFX_Canvas* canvas, FVec2 camera, double camDir) {
 
 			GFX_DrawPixel(
 				canvas, pixel.x, pixel.y,
-				GFX_GetPixel(&map->texture, pixelIndex.x, pixelIndex.y)
+				FogifyPixel(
+					GFX_GetPixel(&map->texture, pixelIndex.x, pixelIndex.y), distance
+				)
 			);
 		}
 	}
 
-	// draw skybox
-	GFX_Rect skyboxDest = {0, 0, 320, 92};
-	GFX_Rect skyboxSrc  = {0, 0, 320, 92};
-	GFX_BlitCanvas(canvas, &map->skybox, &skyboxDest, &skyboxSrc);
+	// draw test sprite
+	MapSprite sprite;
+	sprite.x = 10.0;
+	sprite.y = 10.0;
+	Map_RenderSprite(canvas, camera, &sprite);
+
+	/*if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP])
+		rotY -= 3;
+	if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_DOWN])
+		rotY += 3;
+
+	if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_Q])
+		cameraZ -= 0.05;
+	if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_E])
+		cameraZ += 0.05;
+
+	if (cameraZ < 0.05)
+		cameraZ = 0.05;*/ // terrible code by LordOfTrident
 }

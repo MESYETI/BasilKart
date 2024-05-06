@@ -4,6 +4,8 @@
 #include "types.h"
 #include "gfx/canvas.h"
 
+struct Camera;
+
 typedef struct {
 	double     x, y;
 	GFX_Canvas canvas;
@@ -30,6 +32,7 @@ typedef struct {
 
 void     Map_Init(Map* map, int width, int height);
 MapTile* Map_GetTile(Map* map, int x, int y);
-void     Map_Render(Map* map, GFX_Canvas* canvas, FVec2 camera, double camDir);
+void     Map_RenderSprite(GFX_Canvas* canvas, struct Camera camera, MapSprite* sprite);
+void     Map_Render(Map* map, GFX_Canvas* canvas, struct Camera camera);
 
 #endif

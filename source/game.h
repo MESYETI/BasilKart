@@ -5,9 +5,16 @@
 #include "types.h"
 #include "scene.h"
 
+struct Camera {
+	FVec3  pos;
+	double dirH;
+	double dirV;
+};
+
+typedef struct Camera Camera;
+
 typedef struct {
-	FVec2  camera;
-	double camDir;
+	Camera camera;
 	Map    map;
 } Game;
 

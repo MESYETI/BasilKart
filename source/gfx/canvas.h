@@ -3,12 +3,16 @@
 
 #include "../common.h"
 
-typedef uint32_t GFX_Colour;
+typedef uint32_t GFX_Pixel;
+
+typedef struct {
+	uint8_t r, g, b, a;
+} GFX_Colour;
 
 typedef struct {
 	int         width;
 	int         height;
-	GFX_Colour* pixels;
+	GFX_Pixel* pixels;
 } GFX_Canvas;
 
 typedef struct {
@@ -21,15 +25,17 @@ typedef struct {
 
 void        GFX_NewCanvas(GFX_Canvas* canvas, int width, int height);
 void        GFX_FreeCanvas(GFX_Canvas* canvas);
-GFX_Colour  GFX_RGBToColour(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-void        GFX_DrawPixel(GFX_Canvas* canvas, int x, int y, GFX_Colour col);
+GFX_Pixel   GFX_ColourToPixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+GFX_Colour  GFX_PixelToColour(GFX_Pixel colour);
+void        GFX_DrawPixel(GFX_Canvas* canvas, int x, int y, GFX_Pixel col);
 void        GFX_ClearCanvas(GFX_Canvas* canvas, uint8_t r, uint8_t g, uint8_t b);
-GFX_Colour  GFX_GetPixel(GFX_Canvas* canvas, int x, int y);
+GFX_Pixel   GFX_GetPixel(GFX_Canvas* canvas, int x, int y);
+GFX_Pixel   GFX_LerpPixel(GFX_Pixel a, GFX_Pixel b, double t);
 void        GFX_CropCanvas(GFX_Canvas* dest, GFX_Canvas* src, int x, int y, int w, int h);
 void        GFX_BlitCanvas(
 	GFX_Canvas* canvas, GFX_Canvas* from, GFX_Rect* pdest, GFX_Rect* psrc
 );
-void GFX_HLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Colour colour);
-void GFX_VLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Colour colour);
+void GFX_HLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour);
+void GFX_VLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour);
 
 #endif

@@ -17,3 +17,7 @@ double CosDeg(double deg) {
 double SinDeg(double deg) {
 	return sin(DegToRad(deg));
 }
+
+double Lerp(double a, double b, double t) {
+    return a * (1.0 - t) + (b * t);
+}

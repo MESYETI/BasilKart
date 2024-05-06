@@ -45,7 +45,7 @@ void GFX_LoadImage(GFX_Canvas* canvas, const char* path) {
 				&colour.b
 			);
 			GFX_DrawPixel(
-				canvas, x, y, GFX_RGBToColour(colour.r, colour.g, colour.b, 255)
+				canvas, x, y, GFX_ColourToPixel(colour.r, colour.g, colour.b, 255)
 			);
 		}
 	}
