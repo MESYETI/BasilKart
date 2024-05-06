@@ -3,6 +3,7 @@
 
 #include "scene.h"
 #include "common.h"
+#include "gfx/text.h"
 #include "gfx/canvas.h"
 #include "gfx/screen.h"
 
@@ -18,6 +19,7 @@ typedef struct {
 	Scene      scenes[APPSCENE_AMOUNT];
 	Scene*     scene;
 	GFX_Canvas canvas;
+	GFX_Font   font;
 } App;
 
 App* App_Instance(void);

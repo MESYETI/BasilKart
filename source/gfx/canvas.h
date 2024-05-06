@@ -28,6 +28,7 @@ void        GFX_FreeCanvas(GFX_Canvas* canvas);
 GFX_Pixel   GFX_ColourToPixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 GFX_Colour  GFX_PixelToColour(GFX_Pixel colour);
 void        GFX_DrawPixel(GFX_Canvas* canvas, int x, int y, GFX_Pixel col);
+void        GFX_SetPixel(GFX_Canvas* canvas, int x, int y, GFX_Pixel col);
 void        GFX_ClearCanvas(GFX_Canvas* canvas, uint8_t r, uint8_t g, uint8_t b);
 GFX_Pixel   GFX_GetPixel(GFX_Canvas* canvas, int x, int y);
 GFX_Pixel   GFX_LerpPixel(GFX_Pixel a, GFX_Pixel b, double t);

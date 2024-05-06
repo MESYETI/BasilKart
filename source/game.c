@@ -54,6 +54,20 @@ static void Update(void) {
 			game.camera.dirH -= 360;
 		}
 	}
+	if (keyState[SDL_SCANCODE_UP]) {
+		game.camera.dirV += 3.0;
+
+		if (game.camera.dirV > 180) {
+			game.camera.dirV = 180;
+		}
+	}
+	if (keyState[SDL_SCANCODE_DOWN]) {
+		game.camera.dirV -= 3.0;
+
+		if (game.camera.dirV < -180) {
+			game.camera.dirV = -180;
+		}
+	}
 }
 
 static void Render(GFX_Canvas* canvas) {

@@ -28,6 +28,23 @@ GFX_Colour GFX_PixelToColour(GFX_Pixel colour) {
 }
 
 void GFX_DrawPixel(GFX_Canvas* canvas, int x, int y, GFX_Pixel col) {
+	GFX_Pixel newCol;
+	uint8_t   alpha = (col & 0xFF000000) >> 24;
+
+	if (alpha == 0) return;
+	if (alpha == 255) {
+		newCol = col;
+	}
+	else {
+		GFX_Pixel old = GFX_GetPixel(canvas, x, y);
+		newCol        = GFX_LerpPixel(old, col, (double) alpha / 255.0);
+	}
+
+	//canvas->pixels[(y * canvas->width) + x] = newCol;
+	GFX_SetPixel(canvas, x, y, newCol);
+}
+
+void GFX_SetPixel(GFX_Canvas* canvas, int x, int y, GFX_Pixel col) {
 	if ((x >= canvas->width) || (y >= canvas->height) || (x < 0) || (y < 0)) {
 		return;
 	}

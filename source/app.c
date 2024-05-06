@@ -19,6 +19,8 @@ void App_Init() {
 	app.scenes[APPSCENE_GAME]        = GameScene();
 	app.scene = app.scenes + APPSCENE_GAME;
 	app.scene->init();
+
+	app.font = GFX_LoadFont("assets/font.bmp", 8, 8);
 }
 
 void App_Free() {
@@ -42,6 +44,8 @@ void App_Update() {
 
 	app.scene->update();
 	app.scene->render(&app.canvas);
+
+	GFX_DrawText(&app.font, &app.canvas, "Basil Kart BETA", 1, 1);
 
 	GFX_RenderScreen(&app.screen, &app.canvas);
 }
