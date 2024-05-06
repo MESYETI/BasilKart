@@ -8,6 +8,7 @@
 
 static const int centerY = APP_WIN_HEIGHT / 2;
 static double    maxDist = 100;
+static GFX_Canvas testSprite;
 
 static double rayDirMap[APP_WIN_WIDTH];
 
@@ -25,6 +26,7 @@ void Map_Init(Map* map, int width, int height) {
 	printf("0 = %f\n", rayDirMap[0]);
 
 	GFX_LoadImage(&map->texture, "assets/tiles.bmp");
+	GFX_LoadImage(&testSprite, "test.bmp");
 
 	map->tiles = SafeMalloc(sizeof(MapTile) * width * height);
 
@@ -126,19 +128,32 @@ void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
 
 	double h = 1;
 	// height of sprite in the world, 1 is player height, 0.5 is half player height...
-	double z = 0; // z position of sprite in the world, 0 is on the ground (player feet),
+	//double z = 0; // z position of sprite in the world, 0 is on the ground (player feet),
 	             // 0.5 is in the center of the screen...
 	//double unit = (double) canvas->height / distance;
 	double unit = (double) centerY * 2 / distance;
 
-	GFX_Point lineStart = {
-		(int) x, round((double) centerY - (h - camera.pos.z + z) * unit) + camera.dirV
-	};
+	/*int lineStart = 
+		round((double) centerY - (h - camera.pos.z + sprite->z) * unit) + camera.dirV;
 
 	GFX_VLine(
-		canvas, x, lineStart.y, round(unit * h),
+		canvas, x, lineStart, round(unit * h),
 		FogifyPixel(GFX_ColourToPixel(255, 255, 255, 255), distance)
+	);*/
+
+	int spriteStartY =
+		round((double) centerY - (h - camera.pos.z + sprite->z) * unit) + camera.dirV;
+	int spriteHeight = round(unit * h);
+
+	GFX_Rect rect;
+	rect.h = spriteHeight;
+	rect.w = (int) (
+		((double) spriteHeight / sprite->canvas.height) * (double) sprite->canvas.width
 	);
+	rect.x = x - (rect.w / 2);
+	rect.y = spriteStartY;
+
+	GFX_BlitCanvas(canvas, &sprite->canvas, &rect, NULL);
 }
 
 void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
@@ -201,8 +216,9 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 
 	// draw test sprite
 	MapSprite sprite;
-	sprite.x = 10.0;
-	sprite.y = 10.0;
+	sprite.x      = 10.0;
+	sprite.y      = 10.0;
+	sprite.canvas = testSprite;
 	Map_RenderSprite(canvas, camera, &sprite);
 
 	/*if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP])

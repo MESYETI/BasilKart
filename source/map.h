@@ -7,7 +7,7 @@
 struct Camera;
 
 typedef struct {
-	double     x, y;
+	double     x, y, z;
 	GFX_Canvas canvas;
 } MapSprite;
 
