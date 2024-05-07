@@ -10,6 +10,7 @@
 typedef enum {
 	APPSCENE_TITLESCREEN = 0,
 	APPSCENE_GAME,
+	APPSCENE_TRACK_EDITOR,
 	APPSCENE_AMOUNT
 } AppScene;
 
@@ -20,6 +21,9 @@ typedef struct {
 	Scene*     scene;
 	GFX_Canvas canvas;
 	GFX_Font   font;
+	double     deltaTime;
+	double     fps;
+	uint64_t   ticks;
 } App;
 
 App* App_Instance(void);

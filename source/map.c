@@ -23,8 +23,6 @@ void Map_Init(Map* map, int width, int height) {
 		));
 	}
 
-	printf("0 = %f\n", rayDirMap[0]);
-
 	GFX_LoadImage(&map->texture, "assets/tiles.bmp");
 	GFX_LoadImage(&testSprite, "test.bmp");
 

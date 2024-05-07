@@ -22,8 +22,6 @@ GFX_Font GFX_LoadFont(const char* path, int charWidth, int charHeight) {
 }
 
 void GFX_DrawText(GFX_Font* font, GFX_Canvas* canvas, const char* text, int x, int y) {
-	int width = strlen(text) * font->charWidth;
-
 	for (int i = 0; i < (int) strlen(text); ++ i) {
 		GFX_Rect src;
 		src.x = ((int) text[i]) % (font->canvas.width / font->charWidth) * font->charWidth;
