@@ -3,6 +3,7 @@
 #include "map.h"
 #include "game.h"
 #include "util.h"
+#include "input.h"
 #include "gfx/image.h"
 #include "gfx/canvas.h"
 
@@ -24,44 +25,44 @@ static void Free(void) {
 static void Update(void) {
 	const uint8_t* keyState = SDL_GetKeyboardState(NULL);
 
-	if (keyState[SDL_SCANCODE_W]) {
+	if (Input_ActionActive(ACTION_CAMERA_FORWARD)) {
 		game.camera.pos.x += cos(DegToRad(game.camera.dirH)) * 0.1;
 		game.camera.pos.y += sin(DegToRad(game.camera.dirH)) * 0.1;
 	}
-	if (keyState[SDL_SCANCODE_A]) {
+	if (Input_ActionActive(ACTION_CAMERA_LEFT)) {
 		game.camera.pos.x += cos(DegToRad(game.camera.dirH - 90)) * 0.1;
 		game.camera.pos.y += sin(DegToRad(game.camera.dirH - 90)) * 0.1;
 	}
-	if (keyState[SDL_SCANCODE_S]) {
+	if (Input_ActionActive(ACTION_CAMERA_BACKWARDS)) {
 		game.camera.pos.x += cos(DegToRad(game.camera.dirH + 180)) * 0.1;
 		game.camera.pos.y += sin(DegToRad(game.camera.dirH + 180)) * 0.1;
 	}
-	if (keyState[SDL_SCANCODE_D]) {
+	if (Input_ActionActive(ACTION_CAMERA_RIGHT)) {
 		game.camera.pos.x += cos(DegToRad(game.camera.dirH + 90)) * 0.1;
 		game.camera.pos.y += sin(DegToRad(game.camera.dirH + 90)) * 0.1;
 	}
-	if (keyState[SDL_SCANCODE_LEFT]) {
+	if (Input_ActionActive(ACTION_CAMERA_LOOK_LEFT)) {
 		game.camera.dirH -= 3.0;
 
 		while (game.camera.dirH < -180) {
 			game.camera.dirH += 360.0;
 		}
 	}
-	if (keyState[SDL_SCANCODE_RIGHT]) {
+	if (Input_ActionActive(ACTION_CAMERA_LOOK_RIGHT)) {
 		game.camera.dirH += 3.0;
 
 		while (game.camera.dirH > 180) {
 			game.camera.dirH -= 360;
 		}
 	}
-	if (keyState[SDL_SCANCODE_UP]) {
+	if (Input_ActionActive(ACTION_CAMERA_LOOK_UP)) {
 		game.camera.dirV += 3.0;
 
 		if (game.camera.dirV > 180) {
 			game.camera.dirV = 180;
 		}
 	}
-	if (keyState[SDL_SCANCODE_DOWN]) {
+	if (Input_ActionActive(ACTION_CAMERA_LOOK_DOWN)) {
 		game.camera.dirV -= 3.0;
 
 		if (game.camera.dirV < -180) {

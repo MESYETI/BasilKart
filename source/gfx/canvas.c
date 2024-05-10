@@ -28,6 +28,10 @@ GFX_Colour GFX_PixelToColour(GFX_Pixel colour) {
 }
 
 void GFX_DrawPixel(GFX_Canvas* canvas, int x, int y, GFX_Pixel col) {
+	if ((x >= canvas->width) || (y >= canvas->height) || (x < 0) || (y < 0)) {
+		return;
+	}
+
 	GFX_Pixel newCol;
 	uint8_t   alpha = (col & 0xFF000000) >> 24;
 

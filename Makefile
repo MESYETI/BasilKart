@@ -5,11 +5,14 @@ LIBS  = -lSDL2 -lm
 FLAGS = -std=c99 -Wall -Wextra -pedantic -g -I./lib
 OUT   = BasilKart
 
-compile: ./bin ./bin/gfx $(OBJ) $(SRC) $(DEPS)
+compile: ./bin ./bin/gfx ./bin/ui $(OBJ) $(SRC) $(DEPS)
 	$(CC) $(OBJ) $(LIBS) -o $(OUT)
 
 ./bin/gfx:
 	mkdir -p bin/gfx
+
+./bin/ui:
+	mkdir -p bin/ui
 
 ./bin:
 	mkdir -p bin

@@ -1,5 +1,6 @@
 #include "app.h"
 #include "game.h"
+#include "input.h"
 #include "constants.h"
 #include "titlescreen.h"
 #include "gfx/image.h"
@@ -25,11 +26,23 @@ void App_Init() {
 	app.deltaTime = 0.0;
 	app.fps       = 0.0;
 	app.ticks     = 0;
+
+	Input_Init();
+	Input_BindKey(ACTION_CAMERA_FORWARD,    SDL_SCANCODE_W);
+	Input_BindKey(ACTION_CAMERA_LEFT,       SDL_SCANCODE_A);
+	Input_BindKey(ACTION_CAMERA_RIGHT,      SDL_SCANCODE_D);
+	Input_BindKey(ACTION_CAMERA_BACKWARDS,  SDL_SCANCODE_S);
+	Input_BindKey(ACTION_CAMERA_LOOK_LEFT,  SDL_SCANCODE_LEFT);
+	Input_BindKey(ACTION_CAMERA_LOOK_RIGHT, SDL_SCANCODE_RIGHT);
+	Input_BindKey(ACTION_CAMERA_LOOK_UP,    SDL_SCANCODE_UP);
+	Input_BindKey(ACTION_CAMERA_LOOK_DOWN,  SDL_SCANCODE_DOWN);
 }
 
 void App_Free() {
 	GFX_FreeScreen(&app.screen);
 	app.scene->free();
+
+	Input_Free();
 }
 
 void App_Update() {
