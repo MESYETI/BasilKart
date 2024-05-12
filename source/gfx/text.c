@@ -38,3 +38,9 @@ void GFX_DrawText(GFX_Font* font, GFX_Canvas* canvas, const char* text, int x, i
 		GFX_BlitCanvas(canvas, &font->canvas, &dest, &src);
 	}
 }
+
+Vec2 GFX_TextSize(GFX_Font* font, const char* text) {
+	return (Vec2) {
+		strlen(text) * font->charWidth, font->charHeight
+	};
+}

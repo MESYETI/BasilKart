@@ -55,3 +55,19 @@ bool Input_ActionActive(size_t actionIndex) {
 	}
 	else return false;
 }
+
+bool Input_ActionPressed(size_t actionIndex, SDL_Event* e) {
+	assert(e->type == SDL_KEYDOWN);
+	InputAction* action = input.actions + actionIndex;
+
+	if (Input_KeyboardAvailable() && (action->key[0] == e->key.keysym.scancode)) {
+		const uint8_t* keys = SDL_GetKeyboardState(NULL);
+
+		for (size_t i = 1; i < action->keyAmount; ++ i) {
+			if (!keys[action->key[i]]) return false;
+		}
+
+		return true;
+	}
+	else return false;
+}

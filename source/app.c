@@ -18,10 +18,11 @@ void App_Init() {
 
 	app.scenes[APPSCENE_TITLESCREEN] = TitlescreenScene();
 	app.scenes[APPSCENE_GAME]        = GameScene();
-	app.scene = app.scenes + APPSCENE_GAME;
+	app.scene = app.scenes + APPSCENE_TITLESCREEN;
 	app.scene->init();
 
-	app.font = GFX_LoadFont("assets/font.bmp", 8, 8);
+	app.font      = GFX_LoadFont("assets/font.bmp", 8, 8);
+	GFX_LoadImage(&app.uiTexture, "assets/ui.bmp");
 
 	app.deltaTime = 0.0;
 	app.fps       = 0.0;

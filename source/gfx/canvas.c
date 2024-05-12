@@ -159,3 +159,10 @@ void GFX_VLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour) {
 		GFX_DrawPixel(canvas, x, y + i, colour);
 	}
 }
+
+void GFX_DrawRect(GFX_Canvas* canvas, GFX_Rect rect, GFX_Pixel colour) {
+	GFX_HLine(canvas, rect.x, rect.y, rect.w, colour);
+	GFX_VLine(canvas, rect.x, rect.y, rect.h, colour);
+	GFX_HLine(canvas, rect.x, rect.y + rect.h - 1, rect.w, colour);
+	GFX_VLine(canvas, rect.x + rect.w - 1, rect.y, rect.h, colour);
+}

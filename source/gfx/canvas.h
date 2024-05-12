@@ -38,5 +38,6 @@ void        GFX_BlitCanvas(
 );
 void GFX_HLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour);
 void GFX_VLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour);
+void GFX_DrawRect(GFX_Canvas* canvas, GFX_Rect rect, GFX_Pixel colour);
 
 #endif

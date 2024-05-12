@@ -24,6 +24,7 @@ typedef struct {
 	double     deltaTime;
 	double     fps;
 	uint64_t   ticks;
+	GFX_Canvas uiTexture;
 } App;
 
 App* App_Instance(void);
