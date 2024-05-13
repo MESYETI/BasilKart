@@ -16,27 +16,32 @@ void App_Init() {
 	GFX_InitScreen(&app.screen, APP_WIN_WIDTH, APP_WIN_HEIGHT);
 	GFX_NewCanvas(&app.canvas, APP_WIN_WIDTH, APP_WIN_HEIGHT);
 
+	app.font      = GFX_LoadFont("assets/font.bmp", 8, 8);
+	GFX_LoadImage(&app.uiTexture, "assets/ui.bmp");
+
 	app.scenes[APPSCENE_TITLESCREEN] = TitlescreenScene();
 	app.scenes[APPSCENE_GAME]        = GameScene();
 	app.scene = app.scenes + APPSCENE_TITLESCREEN;
 	app.scene->init();
-
-	app.font      = GFX_LoadFont("assets/font.bmp", 8, 8);
-	GFX_LoadImage(&app.uiTexture, "assets/ui.bmp");
 
 	app.deltaTime = 0.0;
 	app.fps       = 0.0;
 	app.ticks     = 0;
 
 	Input_Init();
-	Input_BindKey(ACTION_CAMERA_FORWARD,    SDL_SCANCODE_W);
-	Input_BindKey(ACTION_CAMERA_LEFT,       SDL_SCANCODE_A);
-	Input_BindKey(ACTION_CAMERA_RIGHT,      SDL_SCANCODE_D);
-	Input_BindKey(ACTION_CAMERA_BACKWARDS,  SDL_SCANCODE_S);
-	Input_BindKey(ACTION_CAMERA_LOOK_LEFT,  SDL_SCANCODE_LEFT);
-	Input_BindKey(ACTION_CAMERA_LOOK_RIGHT, SDL_SCANCODE_RIGHT);
-	Input_BindKey(ACTION_CAMERA_LOOK_UP,    SDL_SCANCODE_UP);
-	Input_BindKey(ACTION_CAMERA_LOOK_DOWN,  SDL_SCANCODE_DOWN);
+	Input_BindKey(ACTION_CAMERA_FORWARD,     SDL_SCANCODE_W);
+	Input_BindKey(ACTION_CAMERA_LEFT,        SDL_SCANCODE_A);
+	Input_BindKey(ACTION_CAMERA_RIGHT,       SDL_SCANCODE_D);
+	Input_BindKey(ACTION_CAMERA_BACKWARDS,   SDL_SCANCODE_S);
+	Input_BindKey(ACTION_CAMERA_LOOK_LEFT,   SDL_SCANCODE_LEFT);
+	Input_BindKey(ACTION_CAMERA_LOOK_RIGHT,  SDL_SCANCODE_RIGHT);
+	Input_BindKey(ACTION_CAMERA_LOOK_UP,     SDL_SCANCODE_UP);
+	Input_BindKey(ACTION_CAMERA_LOOK_DOWN,   SDL_SCANCODE_DOWN);
+	Input_BindKey(ACTION_TABLE_SELECT_LEFT,  SDL_SCANCODE_LEFT);
+	Input_BindKey(ACTION_TABLE_SELECT_RIGHT, SDL_SCANCODE_RIGHT);
+	Input_BindKey(ACTION_TABLE_SELECT_UP,    SDL_SCANCODE_UP);
+	Input_BindKey(ACTION_TABLE_SELECT_DOWN,  SDL_SCANCODE_DOWN);
+	Input_BindKey(ACTION_TABLE_SELECT,       SDL_SCANCODE_RETURN);
 }
 
 void App_Free() {

@@ -35,6 +35,8 @@ typedef struct {
 	size_t                columns;
 	size_t                selected;
 	Vec2                  elementSize;
+	Vec2                  slices;
+	Vec2                  margin;
 } UI_Table;
 
 struct UI_TableEntry {
@@ -48,6 +50,7 @@ struct UI_TableEntry {
 	FUNCTION_POINTER(void, handleEvent, struct UI_TableEntry*, SDL_Event*);
 	FUNCTION_POINTER(void, onAction, struct UI_TableEntry*);
 	FUNCTION_POINTER(void, render, GFX_Canvas*, struct UI_TableEntry*);
+	FUNCTION_POINTER(int,  minSize, struct UI_TableEntry*);
 };
 
 typedef struct UI_TableEntry UI_TableEntry;
@@ -57,6 +60,9 @@ void        UI_AddTableEntry(UI_Element* ptable, UI_TableEntry entry);
 void        UI_SetTableElementSize(UI_Element* ptable, int width, int height);
 void        UI_TableSelect(UI_Element* ptable, size_t column, size_t line);
 Vec2        UI_GetTableSelected(UI_Element* ptable);
+void        UI_SetTableMargin(UI_Element* ptable, int w, int h);
+void        UI_UpdateTableHeight(UI_Element* ptable);
+void        UI_InitTableSelection(UI_Element* ptable);
 UI_Element* UI_GetLastElement(UI_Manager* ptable);
 UI_Manager  UI_NewManager(void);
 void        UI_FreeManager(UI_Manager* ui);

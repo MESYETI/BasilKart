@@ -66,7 +66,7 @@ void GFX_ClearCanvas(GFX_Canvas* canvas, uint8_t r, uint8_t g, uint8_t b) {
 
 GFX_Pixel GFX_GetPixel(GFX_Canvas* canvas, int x, int y) {
 	if ((x < 0) || (y < 0) || (x >= canvas->width) || (y >= canvas->height)) {
-		printf("Out of bounds: %d %d\n", x, y);
+		printf("Out of bounds: %d %d for %d %d\n", x, y, canvas->width, canvas->height);
 		assert(0);
 	}
 

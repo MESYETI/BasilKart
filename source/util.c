@@ -1,4 +1,6 @@
+#include <string.h>
 #include "util.h"
+#include "safe.h"
 
 #define M_PI 3.14159265359
 
@@ -20,4 +22,10 @@ double SinDeg(double deg) {
 
 double Lerp(double a, double b, double t) {
     return a * (1.0 - t) + (b * t);
+}
+
+char* NewString(const char* src) {
+	char* ret = SafeMalloc(strlen(src) + 1);
+	strcpy(ret, src);
+	return ret;
 }

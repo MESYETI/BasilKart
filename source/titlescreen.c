@@ -15,27 +15,43 @@ static void Init(void) {
 	App* app = App_Instance();
 	ui       = UI_NewManager();
 
-	UI_AddManagerElement(&ui, UI_NewTable(50, 50, 180, 16, 2));
+	UI_AddManagerElement(&ui, UI_NewTable(10, 50, 264, 64, 3));
 	tableElem = UI_GetLastElement(&ui);
 	table     = (UI_Table*) tableElem->data;
 	UI_SetTableElementSize(tableElem, 180, 16);
+	UI_SetTableMargin(tableElem, 8, 8);
 
-	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "label"));
+	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "A"));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "button I", NULL)
 	);
-	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "label"));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "button II", NULL)
 	);
-	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "label"));
+	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "AB"));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "button III", NULL)
 	);
-	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "label"));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "button IV", NULL)
 	);
+	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "ABC"));
+	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "button V", NULL)
+	);
+	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "button VI", NULL)
+	);
+	UI_AddTableEntry(tableElem, UI_NewLabel(&app->font, "ABCD"));
+	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "button VII", NULL)
+	);
+	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "button VIII", NULL)
+	);
+
+	UI_UpdateTableHeight(tableElem);
+	UI_InitTableSelection(tableElem);
 }
 
 static void Free(void) {
@@ -43,11 +59,11 @@ static void Free(void) {
 }
 
 static void Update(void) {
-	GFX_Canvas* canvas = &App_Instance()->canvas;
-	GFX_ClearCanvas(canvas, 0, 0, 255);
+
 }
 
 static void Render(GFX_Canvas* canvas) {
+	GFX_ClearCanvas(canvas, 0, 0, 0);
 	UI_RenderManager(&ui, canvas);
 }
 

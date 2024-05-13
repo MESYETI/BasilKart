@@ -19,7 +19,7 @@ static uint32_t GetSurfaceColour(SDL_Surface* surface, int x, int y) {
 			break;
 		}
 		case 4: {
-			return *(Uint32 *)p;
+			return *(Uint32*) p;
 			break;
 		}
 		default: assert(0);
@@ -44,7 +44,7 @@ void GFX_LoadImage(GFX_Canvas* canvas, const char* path) {
 				GetSurfaceColour(surface, x, y), surface->format, &colour.r, &colour.g,
 				&colour.b
 			);
-			GFX_DrawPixel(
+			GFX_SetPixel(
 				canvas, x, y, GFX_ColourToPixel(colour.r, colour.g, colour.b, 255)
 			);
 		}

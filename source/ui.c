@@ -1,5 +1,8 @@
 #include "ui.h"
+#include "app.h"
 #include "safe.h"
+#include "input.h"
+#include "constants.h"
 
 static void TableFree(UI_Element* element) {
 	UI_Table* table = (UI_Table*) element->data;
@@ -10,12 +13,70 @@ static void TableFree(UI_Element* element) {
 	free(element->data);
 }
 
+static size_t GetFirstSelectable(UI_Table* table) {
+	size_t row   = table->selected / table->columns;
+	size_t start = row * table->columns;
+	size_t end   = start + table->columns;
+
+	for (size_t i = start; i < end; ++ i) {
+		if (table->entries[i].selectable) {
+			return i;
+		}
+	}
+
+	assert(0);
+}
+
+static size_t GetLastSelectable(UI_Table* table) {
+	ssize_t row   = (ssize_t) (table->selected / table->columns);
+	ssize_t start = row * (ssize_t) table->columns;
+	ssize_t end   = start + (size_t) table->columns;
+
+	for (ssize_t i = end; i != start - 1; -- i) {
+		if (i < 0) assert(0);
+		if (table->entries[i].selectable) {
+			return (size_t) i;
+		}
+	}
+
+	assert(0);
+}
+
 static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 	UI_Table* table = (UI_Table*) element->data;
 
 	switch (event->type) {
 		case SDL_KEYDOWN: {
-			// TODO
+			if (Input_ActionPressed(ACTION_TABLE_SELECT_UP, event)) {
+				if (table->selected < table->columns) return;
+
+				table->selected -= table->columns;
+				table->selected  = GetFirstSelectable(table);
+				break;
+			}
+			else if (Input_ActionPressed(ACTION_TABLE_SELECT_DOWN, event)) {
+				if (table->selected > table->length - table->columns) return;
+
+				table->selected += table->columns;
+				table->selected  = GetFirstSelectable(table);
+				break;
+			}
+			else if (Input_ActionPressed(ACTION_TABLE_SELECT_LEFT, event)) {
+				size_t first = GetFirstSelectable(table);
+
+				if (table->selected > first) {
+					-- table->selected;
+				}
+				break;
+			}
+			else if (Input_ActionPressed(ACTION_TABLE_SELECT_RIGHT, event)) {
+				size_t last = GetLastSelectable(table);
+
+				if (table->selected < last) {
+					++ table->selected;
+				}
+				break;
+			}
 		} // fall through
 		default: {
 			for (size_t i = 0; i < table->length; ++ i) {
@@ -27,12 +88,68 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 
 static void TableRender(GFX_Canvas* canvas, UI_Element* element) {
 	UI_Table* table = (UI_Table*) element->data;
+	App*      app   = App_Instance();
+	int       w     = element->rect.w / APP_UI_SLICE_SIZE;
+	int       h     = element->rect.h / APP_UI_SLICE_SIZE;
+
+	for (int x = 0; x < w; ++ x) {
+		for (int y = 0; y < h; ++ y) {
+			GFX_Rect dest = (GFX_Rect) {
+				(x * APP_UI_SLICE_SIZE) + element->rect.x,
+				(y * APP_UI_SLICE_SIZE) + element->rect.y,
+				APP_UI_SLICE_SIZE, APP_UI_SLICE_SIZE
+			};
+
+			GFX_Rect src = (GFX_Rect) {
+				table->slices.x * APP_UI_SLICE_SIZE,
+				table->slices.y * APP_UI_SLICE_SIZE,
+				APP_UI_SLICE_SIZE, APP_UI_SLICE_SIZE
+			};
+
+			if ((y == 0) && (x == 0)) {
+				src.x += 0;
+				src.y += 0;
+			}
+			else if ((y == h - 1) && (x == 0)) {
+				src.x += 0 * APP_UI_SLICE_SIZE;
+				src.y += 2 * APP_UI_SLICE_SIZE;
+			}
+			else if ((y == 0) && (x == w - 1)) {
+				src.x += 2 * APP_UI_SLICE_SIZE;
+				src.y += 0 * APP_UI_SLICE_SIZE;
+			}
+			else if ((y == h - 1) && (x == w - 1)) {
+				src.x += 2 * APP_UI_SLICE_SIZE;
+				src.y += 2 * APP_UI_SLICE_SIZE;
+			}
+			else if (y == 0) {
+				src.x += 1 * APP_UI_SLICE_SIZE;
+				src.y += 0 * APP_UI_SLICE_SIZE;
+			}
+			else if (y == h - 1) {
+				src.x += 1 * APP_UI_SLICE_SIZE;
+				src.y += 2 * APP_UI_SLICE_SIZE;
+			}
+			else if (x == 0) {
+				src.x += 0 * APP_UI_SLICE_SIZE;
+				src.y += 1 * APP_UI_SLICE_SIZE;
+			}
+			else if (x == w - 1) {
+				src.x += 2 * APP_UI_SLICE_SIZE;
+				src.y += 1 * APP_UI_SLICE_SIZE;
+			}
+			else {
+				src.x += 1 * APP_UI_SLICE_SIZE;
+				src.y += 1 * APP_UI_SLICE_SIZE;
+			}
+
+			GFX_BlitCanvas(canvas, &app->uiTexture, &dest, &src);
+		}
+	}
 
 	for (size_t i = 0; i < table->length; ++ i) {
 		table->entries[i].render(canvas, table->entries + i);
 	}
-
-	GFX_DrawRect(canvas, element->rect, 0xFFFFFFFF);
 }
 
 UI_Element UI_NewTable(int x, int y, int w, int h, size_t columns) {
@@ -51,6 +168,8 @@ UI_Element UI_NewTable(int x, int y, int w, int h, size_t columns) {
 	table->length   = 0;
 	table->columns  = columns;
 	table->selected = 0;
+	table->slices   = (Vec2) {0, 0};
+	table->margin   = (Vec2) {0, 0};
 
 	return ret;
 }
@@ -69,17 +188,61 @@ void UI_AddTableEntry(UI_Element* ptable, UI_TableEntry entry) {
 
 	UI_TableEntry* thisEntry = &table->entries[table->length - 1];
 
+	Vec2 tableStart = (Vec2) {
+		ptable->rect.x + table->margin.x, ptable->rect.y + table->margin.y
+	};
+	Vec2 tableSize = (Vec2) {
+		ptable->rect.w - (table->margin.x * 2), ptable->rect.h - (table->margin.y * 2)
+	};
+
 	*thisEntry        = entry;
 	thisEntry->rect.x =
 		(((int) (table->length - 1) % table->columns) *
-		(ptable->rect.w / table->columns)) + ptable->rect.x;
+		(tableSize.x / table->columns)) + tableStart.x;
 	thisEntry->rect.y =
 		((((int) table->length - 1) / table->columns) * table->elementSize.y) +
-		ptable->rect.y;
-	thisEntry->rect.w    = ptable->rect.w / table->columns;
+		tableStart.y;
+	thisEntry->rect.w    = tableSize.x / table->columns;
 	thisEntry->rect.h    = table->elementSize.y;
 	thisEntry->parent    = table;
 	thisEntry->thisIndex = table->length - 1;
+
+	size_t rows = table->length / table->columns;
+	if (table->length % table->columns != 0) {
+		++ rows;
+	}
+
+	int col0Width = -1;
+
+	// calculate width of column 0
+	for (size_t i = 0; i < rows; ++ i) {
+		col0Width = MAX(
+			col0Width, table->entries[table->columns * i].minSize(
+				&table->entries[table->columns * i]
+			)
+		);
+	}
+
+	int rowWidth = tableSize.x - col0Width;
+
+	size_t i2 = 0;
+
+	for (size_t i = 0; i < table->length; ++ i) {
+		if (i % table->columns == 0) {
+			table->entries[i].rect.w = col0Width;
+		}
+		else {
+			UI_TableEntry* thisEntry = table->entries + i;
+
+			thisEntry->rect.x =
+				(((int) ((i - (int) (i / table->columns)) - 1) % (table->columns - 1)) *
+				(rowWidth / (table->columns - 1))) + tableStart.x + col0Width;
+
+			thisEntry->rect.w = rowWidth / (table->columns - 1);
+
+			++ i2;
+		}
+	}
 }
 
 void UI_SetTableElementSize(UI_Element* ptable, int width, int height) {
@@ -96,10 +259,33 @@ void UI_TableSelect(UI_Element* ptable, size_t column, size_t line) {
 
 Vec2 UI_GetTableSelected(UI_Element* ptable) {
 	UI_Table* table = (UI_Table*) ptable->data;
+	assert(table->selected != SIZE_MAX);
 
 	return (Vec2) {
 		table->selected % table->columns, table->selected / table->columns
 	};
+}
+
+void UI_SetTableMargin(UI_Element* ptable, int w, int h) {
+	UI_Table* table = (UI_Table*) ptable->data;
+	table->margin   = (Vec2) {w, h};
+}
+
+void UI_UpdateTableHeight(UI_Element* ptable) {
+	UI_Table*      table     = (UI_Table*) ptable->data;
+	UI_TableEntry* lastEntry = table->entries + (table->length - 1);
+
+	int rows = table->length / table->columns;
+	if (table->length % table->columns != 0) {
+		++ rows;
+	}
+
+	ptable->rect.h = (lastEntry->rect.h * rows) + (table->margin.y * 2);
+}
+
+void UI_InitTableSelection(UI_Element* ptable) {
+	UI_Table* table = (UI_Table*) ptable->data;
+	table->selected = GetFirstSelectable(table);
 }
 
 UI_Element* UI_GetLastElement(UI_Manager* ui) {

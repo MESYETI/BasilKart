@@ -23,8 +23,6 @@ static void Free(void) {
 }
 
 static void Update(void) {
-	const uint8_t* keyState = SDL_GetKeyboardState(NULL);
-
 	if (Input_ActionActive(ACTION_CAMERA_FORWARD)) {
 		game.camera.pos.x += cos(DegToRad(game.camera.dirH)) * 0.1;
 		game.camera.pos.y += sin(DegToRad(game.camera.dirH)) * 0.1;
