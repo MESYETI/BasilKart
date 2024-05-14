@@ -51,14 +51,20 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 				if (table->selected < table->columns) return;
 
 				table->selected -= table->columns;
-				table->selected  = GetFirstSelectable(table);
+
+				if (!table->entries[table->selected].selectable) {
+					table->selected = GetFirstSelectable(table);
+				}
 				break;
 			}
 			else if (Input_ActionPressed(ACTION_TABLE_SELECT_DOWN, event)) {
 				if (table->selected > table->length - table->columns) return;
 
 				table->selected += table->columns;
-				table->selected  = GetFirstSelectable(table);
+
+				if (!table->entries[table->selected].selectable) {
+					table->selected = GetFirstSelectable(table);
+				}
 				break;
 			}
 			else if (Input_ActionPressed(ACTION_TABLE_SELECT_LEFT, event)) {

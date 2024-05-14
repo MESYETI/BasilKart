@@ -15,7 +15,7 @@ static void Init(void) {
 	App* app = App_Instance();
 	ui       = UI_NewManager();
 
-	UI_AddManagerElement(&ui, UI_NewTable(10, 50, 264, 64, 3));
+	UI_AddManagerElement(&ui, UI_NewTable(0, 50, 320, 64, 3));
 	tableElem = UI_GetLastElement(&ui);
 	table     = (UI_Table*) tableElem->data;
 	UI_SetTableElementSize(tableElem, 180, 16);
