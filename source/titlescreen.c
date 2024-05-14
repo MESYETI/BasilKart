@@ -11,6 +11,8 @@
 #include "gfx/canvas.h"
 #include "titlescreen.h"
 
+#define LOGO_HEIGHT 41
+
 static UI_Manager  ui;
 static UI_Element* tableElem;
 static UI_Table*   table;
@@ -70,7 +72,9 @@ static void Init(void) {
 	UI_UpdateTableHeight(tableElem);
 	UI_InitTableSelection(tableElem);
 
-	tableElem->rect.y = APP_WIN_HEIGHT - tableElem->rect.h - 8;
+	tableElem->rect.y =
+		(APP_WIN_HEIGHT / 2) - (tableElem->rect.h + (LOGO_HEIGHT * 2) + 8) / 2;
+	tableElem->rect.y += (LOGO_HEIGHT * 2) + 8;
 	UI_UpdateElementRects(tableElem);
 }
 
@@ -100,7 +104,7 @@ static void Render(GFX_Canvas* canvas) {
 	dest.w = src.w * 2;
 	dest.h = src.h * 2;
 	dest.x = (APP_WIN_WIDTH / 2) - (dest.w / 2);
-	dest.y = 50;
+	dest.y = (APP_WIN_HEIGHT / 2) - (tableElem->rect.h + (LOGO_HEIGHT * 2) + 8) / 2;
 	GFX_BlitCanvas(canvas, &app->uiTexture, &dest, &src);
 }
 
