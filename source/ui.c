@@ -83,6 +83,10 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 				}
 				break;
 			}
+			else if (Input_ActionPressed(ACTION_TABLE_SELECT, event)) {
+				table->entries[table->selected].onAction(table->entries + table->selected);
+				break;
+			}
 		} // fall through
 		default: {
 			for (size_t i = 0; i < table->length; ++ i) {
@@ -292,6 +296,10 @@ void UI_UpdateTableHeight(UI_Element* ptable) {
 void UI_InitTableSelection(UI_Element* ptable) {
 	UI_Table* table = (UI_Table*) ptable->data;
 	table->selected = GetFirstSelectable(table);
+}
+
+void UI_CenterElement(UI_Element* element) {
+	element->rect.x = (APP_WIN_WIDTH / 2) - (element->rect.w / 2);
 }
 
 UI_Element* UI_GetLastElement(UI_Manager* ui) {

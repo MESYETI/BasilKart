@@ -63,6 +63,7 @@ Vec2        UI_GetTableSelected(UI_Element* ptable);
 void        UI_SetTableMargin(UI_Element* ptable, int w, int h);
 void        UI_UpdateTableHeight(UI_Element* ptable);
 void        UI_InitTableSelection(UI_Element* ptable);
+void        UI_CenterElement(UI_Element* element);
 UI_Element* UI_GetLastElement(UI_Manager* ptable);
 UI_Manager  UI_NewManager(void);
 void        UI_FreeManager(UI_Manager* ui);

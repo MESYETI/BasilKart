@@ -12,7 +12,11 @@ static void HandleEvent(UI_TableEntry* this, SDL_Event* e) {
 }
 
 static void OnAction(UI_TableEntry* this) {
-	UNUSED(this);
+	UI_Button* button = (UI_Button*) this->data;
+
+	if (button->onClick != NULL) {
+		button->onClick(this);
+	}
 }
 
 static char* GetLabel(UI_TableEntry* this) {
