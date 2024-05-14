@@ -58,7 +58,7 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 				break;
 			}
 			else if (Input_ActionPressed(ACTION_TABLE_SELECT_DOWN, event)) {
-				if (table->selected > table->length - table->columns) return;
+				if (table->selected >= table->length - table->columns) return;
 
 				table->selected += table->columns;
 
@@ -184,6 +184,63 @@ UI_Element UI_NewTable(int x, int y, int w, int h, size_t columns) {
 	return ret;
 }
 
+void UI_UpdateElementRects(UI_Element* ptable) {
+	UI_Table* table = (UI_Table*) ptable->data;
+
+	for (size_t i = 0; i < table->length; ++ i) {
+		UI_TableEntry* thisEntry = table->entries + i;
+
+		Vec2 tableStart = (Vec2) {
+			ptable->rect.x + table->margin.x, ptable->rect.y + table->margin.y
+		};
+		Vec2 tableSize = (Vec2) {
+			ptable->rect.w - (table->margin.x * 2), ptable->rect.h - (table->margin.y * 2)
+		};
+
+		thisEntry->rect.x =
+			(((int) i % table->columns) *
+			(tableSize.x / table->columns)) + tableStart.x;
+		thisEntry->rect.y =
+			((((int) i) / table->columns) * table->elementSize.y) + tableStart.y;
+		thisEntry->rect.w    = tableSize.x / table->columns;
+		thisEntry->rect.h    = table->elementSize.y;
+		thisEntry->parent    = table;
+		thisEntry->thisIndex = i;
+
+		size_t rows = table->length / table->columns;
+		if (table->length % table->columns != 0) {
+			++ rows;
+		}
+
+		int col0Width = -1;
+
+		// calculate width of column 0
+		for (size_t j = 0; j < rows; ++ j) {
+			col0Width = MAX(
+				col0Width, table->entries[table->columns * j].minSize(
+					&table->entries[table->columns * j]
+				)
+			);
+		}
+
+		int rowWidth = tableSize.x - col0Width;
+		for (size_t j = 0; j < table->length; ++ j) {
+			if (j % table->columns == 0) {
+				table->entries[j].rect.w = col0Width;
+			}
+			else {
+				UI_TableEntry* thisEntry = table->entries + j;
+
+				thisEntry->rect.x =
+					(((int) ((j - (int) (j / table->columns)) - 1) % (table->columns - 1)) *
+					(rowWidth / (table->columns - 1))) + tableStart.x + col0Width;
+
+				thisEntry->rect.w = rowWidth / (table->columns - 1);
+			}
+		}
+	}
+}
+
 void UI_AddTableEntry(UI_Element* ptable, UI_TableEntry entry) {
 	UI_Table* table = (UI_Table*) ptable->data;
 
@@ -197,62 +254,7 @@ void UI_AddTableEntry(UI_Element* ptable, UI_TableEntry entry) {
 	}
 
 	UI_TableEntry* thisEntry = &table->entries[table->length - 1];
-
-	Vec2 tableStart = (Vec2) {
-		ptable->rect.x + table->margin.x, ptable->rect.y + table->margin.y
-	};
-	Vec2 tableSize = (Vec2) {
-		ptable->rect.w - (table->margin.x * 2), ptable->rect.h - (table->margin.y * 2)
-	};
-
-	*thisEntry        = entry;
-	thisEntry->rect.x =
-		(((int) (table->length - 1) % table->columns) *
-		(tableSize.x / table->columns)) + tableStart.x;
-	thisEntry->rect.y =
-		((((int) table->length - 1) / table->columns) * table->elementSize.y) +
-		tableStart.y;
-	thisEntry->rect.w    = tableSize.x / table->columns;
-	thisEntry->rect.h    = table->elementSize.y;
-	thisEntry->parent    = table;
-	thisEntry->thisIndex = table->length - 1;
-
-	size_t rows = table->length / table->columns;
-	if (table->length % table->columns != 0) {
-		++ rows;
-	}
-
-	int col0Width = -1;
-
-	// calculate width of column 0
-	for (size_t i = 0; i < rows; ++ i) {
-		col0Width = MAX(
-			col0Width, table->entries[table->columns * i].minSize(
-				&table->entries[table->columns * i]
-			)
-		);
-	}
-
-	int rowWidth = tableSize.x - col0Width;
-
-	size_t i2 = 0;
-
-	for (size_t i = 0; i < table->length; ++ i) {
-		if (i % table->columns == 0) {
-			table->entries[i].rect.w = col0Width;
-		}
-		else {
-			UI_TableEntry* thisEntry = table->entries + i;
-
-			thisEntry->rect.x =
-				(((int) ((i - (int) (i / table->columns)) - 1) % (table->columns - 1)) *
-				(rowWidth / (table->columns - 1))) + tableStart.x + col0Width;
-
-			thisEntry->rect.w = rowWidth / (table->columns - 1);
-
-			++ i2;
-		}
-	}
+	*thisEntry               = entry;
 }
 
 void UI_SetTableElementSize(UI_Element* ptable, int width, int height) {

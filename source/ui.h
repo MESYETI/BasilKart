@@ -56,6 +56,7 @@ struct UI_TableEntry {
 typedef struct UI_TableEntry UI_TableEntry;
 
 UI_Element  UI_NewTable(int x, int y, int w, int h, size_t columns);
+void        UI_UpdateElementRects(UI_Element* ptable);
 void        UI_AddTableEntry(UI_Element* ptable, UI_TableEntry entry);
 void        UI_SetTableElementSize(UI_Element* ptable, int width, int height);
 void        UI_TableSelect(UI_Element* ptable, size_t column, size_t line);

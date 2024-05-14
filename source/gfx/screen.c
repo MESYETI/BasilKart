@@ -7,8 +7,8 @@ void GFX_InitScreen(GFX_Screen* screen, size_t width, size_t height) {
 	}
 
 	screen->window = SDL_CreateWindow(
-		"Basil Kart", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
-		SDL_WINDOW_RESIZABLE
+		"Basil Kart", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		width * 2, height * 2,SDL_WINDOW_RESIZABLE
 	);
 
 	if (screen->window == NULL) {

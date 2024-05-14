@@ -5,6 +5,7 @@
 #include "util.h"
 #include "game.h"
 #include "ui/label.h"
+#include "constants.h"
 #include "ui/button.h"
 #include "gfx/image.h"
 #include "gfx/canvas.h"
@@ -56,11 +57,21 @@ static void Init(void) {
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Time trial", &PlayButton
 	));
 	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "Multiplayer", NULL
+	));
+	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "Options", NULL
+	));
+	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Exit", &ExitButton	
 	));
 
+	UI_UpdateElementRects(tableElem);
 	UI_UpdateTableHeight(tableElem);
 	UI_InitTableSelection(tableElem);
+
+	tableElem->rect.y = APP_WIN_HEIGHT - tableElem->rect.h - 8;
+	UI_UpdateElementRects(tableElem);
 }
 
 static void Free(void) {
@@ -72,9 +83,25 @@ static void Update(void) {
 }
 
 static void Render(GFX_Canvas* canvas) {
+	App* app = App_Instance();
+
 	GFX_ClearCanvas(canvas, 0, 0, 0);
 	Map_Render(&map, canvas, camera);
 	UI_RenderManager(&ui, canvas);
+
+	// render logo
+	GFX_Rect src;
+	src.x = 0;
+	src.y = 24;
+	src.w = 59;
+	src.h = 41;
+
+	GFX_Rect dest;
+	dest.w = src.w * 2;
+	dest.h = src.h * 2;
+	dest.x = (APP_WIN_WIDTH / 2) - (dest.w / 2);
+	dest.y = 50;
+	GFX_BlitCanvas(canvas, &app->uiTexture, &dest, &src);
 }
 
 static void HandleEvent(SDL_Event* e) {
