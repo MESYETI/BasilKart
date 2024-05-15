@@ -28,6 +28,8 @@ typedef struct {
 	int        width;
 	int        height;
 	GFX_Canvas skybox;
+	GFX_Canvas clouds;
+	float      cloudsOffset;
 } Map;
 
 void     Map_Init(Map* map, int width, int height);

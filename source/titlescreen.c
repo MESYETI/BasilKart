@@ -40,6 +40,7 @@ static void Init(void) {
 	ui       = UI_NewManager();
 	Map_Init(&map, 32, 32);
 	GFX_LoadImage(&map.skybox, "assets/sky.bmp");
+	GFX_LoadImage(&map.clouds, "assets/clouds.bmp");
 
 	camera.pos  = (FVec3) {10.0, 16.0, 0.5};
 	camera.dirH = 0.0;
@@ -65,7 +66,7 @@ static void Init(void) {
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Options", NULL
 	));
 	UI_AddTableEntry(tableElem, UI_NewButton(
-		UI_BUTTON_STYLE_ARROWS, &app->font, "Exit", &ExitButton	
+		UI_BUTTON_STYLE_ARROWS, &app->font, "Exit", &ExitButton
 	));
 
 	UI_UpdateElementRects(tableElem);

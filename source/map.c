@@ -6,15 +6,20 @@
 #include "constants.h"
 #include "gfx/image.h"
 
-static const int centerY = APP_WIN_HEIGHT / 2;
-static double    maxDist = 100;
-static GFX_Canvas testSprite;
+static const int   centerY     = APP_WIN_HEIGHT / 2;
+static double      maxDist     = 100;
+static const float cloudsScale = 50;
+static const float cloudsY     = 10;
+static const float cloudsSpeed = 0.0002;
+static GFX_Canvas  testSprite;
 
 static double rayDirMap[APP_WIN_WIDTH];
 
 void Map_Init(Map* map, int width, int height) {
 	map->width  = width;
 	map->height = height;
+
+	map->cloudsOffset = 0;
 
 	for (int i = 0; i < APP_WIN_WIDTH; ++ i) {
 		rayDirMap[i] = RadToDeg(atan2(
@@ -131,7 +136,7 @@ void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
 	//double unit = (double) canvas->height / distance;
 	double unit = (double) centerY * 2 / distance;
 
-	/*int lineStart = 
+	/*int lineStart =
 		round((double) centerY - (h - camera.pos.z + sprite->z) * unit) + camera.dirV;
 
 	GFX_VLine(
@@ -212,6 +217,45 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 		}
 	}
 
+	for (size_t x = 0; x < APP_WIN_WIDTH; ++ x) {
+		for (int y = 0; y <= centerY + camera.dirV; ++ y) {
+			double direction = rayDirMap[x] + camera.dirH;
+			double distance  = ((double) (APP_WIN_HEIGHT)) / ((double) y) * (camera.pos.z + cloudsY);
+			distance        /= CosDeg(camera.dirH - direction);
+
+			if (distance > maxDist) {
+				continue;
+			}
+
+			FVec2 pixelPos = {
+				(CosDeg(direction) * distance + camera.pos.x + 0.5) / cloudsScale + map->cloudsOffset,
+				(SinDeg(direction) * distance + camera.pos.y + 0.5) / cloudsScale + map->cloudsOffset
+			};
+			Vec2 tilePos = {
+				floor(pixelPos.x), floor(pixelPos.y)
+			};
+
+			FVec2 tilePixel = {
+				pixelPos.x - ((double) tilePos.x),
+				pixelPos.y - ((double) tilePos.y)
+			};
+			Vec2 pixel      = {x, (centerY - y) + camera.dirV};
+			Vec2 pixelIndex = {
+				(int) (tilePixel.x * ((double) map->clouds.width)),
+				(int) (tilePixel.y * ((double) map->clouds.height))
+			};
+
+			GFX_DrawPixel(
+				canvas, pixel.x, pixel.y,
+				FogifyPixel(
+					GFX_GetPixel(&map->clouds, pixelIndex.x, pixelIndex.y), distance
+				)
+			);
+		}
+	}
+	// TODO: Multiply cloudsSpeed by delta time
+	map->cloudsOffset += cloudsSpeed;
+
 	// draw test sprite
 	MapSprite sprite;
 	sprite.x      = 10.0;
@@ -231,4 +275,5 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 
 	if (cameraZ < 0.05)
 		cameraZ = 0.05;*/ // terrible code by LordOfTrident
+	// ^ theres nothing terrible about that code yeti
 }
