@@ -5,6 +5,10 @@ LIBS  = -lSDL2 -lm
 FLAGS = -std=c99 -Wall -Wextra -pedantic -g -I./lib
 OUT   = BasilKart
 
+ifeq ($(BUILD), release)
+	FLAGS += -O3
+endif
+
 compile: ./bin ./bin/gfx ./bin/ui $(OBJ) $(SRC) $(DEPS)
 	$(CC) $(OBJ) $(LIBS) -o $(OUT)
 

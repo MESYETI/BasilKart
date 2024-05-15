@@ -204,8 +204,6 @@ void UI_UpdateElementRects(UI_Element* ptable) {
 			((((int) i) / table->columns) * table->elementSize.y) + tableStart.y;
 		thisEntry->rect.w    = tableSize.x / table->columns;
 		thisEntry->rect.h    = table->elementSize.y;
-		thisEntry->parent    = table;
-		thisEntry->thisIndex = i;
 
 		size_t rows = table->length / table->columns;
 		if (table->length % table->columns != 0) {
@@ -255,6 +253,8 @@ void UI_AddTableEntry(UI_Element* ptable, UI_TableEntry entry) {
 
 	UI_TableEntry* thisEntry = &table->entries[table->length - 1];
 	*thisEntry               = entry;
+	thisEntry->parent        = table;
+	thisEntry->thisIndex     = table->length - 1;
 }
 
 void UI_SetTableElementSize(UI_Element* ptable, int width, int height) {
