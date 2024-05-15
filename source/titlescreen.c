@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include "ui.h"
 #include "app.h"
@@ -101,10 +102,11 @@ static void Render(GFX_Canvas* canvas) {
 	src.h = 41;
 
 	GFX_Rect dest;
-	dest.w = src.w * 2;
-	dest.h = src.h * 2;
-	dest.x = (APP_WIN_WIDTH / 2) - (dest.w / 2);
-	dest.y = (APP_WIN_HEIGHT / 2) - (tableElem->rect.h + (LOGO_HEIGHT * 2) + 8) / 2;
+	dest.w  = src.w * 2;
+	dest.h  = src.h * 2;
+	dest.x  = (APP_WIN_WIDTH / 2) - (dest.w / 2);
+	dest.y  = (APP_WIN_HEIGHT / 2) - (tableElem->rect.h + (LOGO_HEIGHT * 2) + 8) / 2;
+	//dest.y += (int) (sin(((double) app->ticks) * 0.075) * 10.0);
 	GFX_BlitCanvas(canvas, &app->uiTexture, &dest, &src);
 }
 
