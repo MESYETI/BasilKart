@@ -68,6 +68,8 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 				break;
 			}
 			else if (Input_ActionPressed(ACTION_TABLE_SELECT_LEFT, event)) {
+				if (table->selected % table->columns == 0) return;
+
 				size_t first = GetFirstSelectable(table);
 
 				if (table->selected > first) {
@@ -76,6 +78,8 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 				break;
 			}
 			else if (Input_ActionPressed(ACTION_TABLE_SELECT_RIGHT, event)) {
+				if (table->selected % table->columns == table->columns - 1) return;
+
 				size_t last = GetLastSelectable(table);
 
 				if (table->selected < last) {

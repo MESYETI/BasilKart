@@ -16,7 +16,7 @@ void App_Init() {
 	GFX_InitScreen(&app.screen, APP_WIN_WIDTH, APP_WIN_HEIGHT);
 	GFX_NewCanvas(&app.canvas, APP_WIN_WIDTH, APP_WIN_HEIGHT);
 
-	app.font      = GFX_LoadFont("assets/font.bmp", 8, 8);
+	app.font = GFX_LoadFont("assets/font.bmp", 8, 8);
 	GFX_LoadImage(&app.uiTexture, "assets/ui.bmp");
 
 	app.scenes[APPSCENE_TITLESCREEN] = TitlescreenScene();
