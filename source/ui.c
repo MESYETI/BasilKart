@@ -46,6 +46,35 @@ static void TableHandleEvent(UI_Element* element, SDL_Event* event) {
 	UI_Table* table = (UI_Table*) element->data;
 
 	switch (event->type) {
+		case SDL_MOUSEMOTION: {
+			for (size_t i = 0; i < table->length; ++ i) {
+				UI_TableEntry* entry    = table->entries + i;
+				Vec2           mousePos = Input_GetUser(0)->mousePos;
+
+				if (
+					(mousePos.x >= entry->rect.x) && (mousePos.y >= entry->rect.y) &&
+					(mousePos.x < entry->rect.x + entry->rect.w) &&
+					(mousePos.y < entry->rect.y + entry->rect.h)
+				) {
+					table->selected = i;
+					return;
+				}
+			}
+			break; // TODO: fall through to default
+		}
+		case SDL_MOUSEBUTTONDOWN: {
+			UI_TableEntry* entry    = table->entries + table->selected;
+			Vec2           mousePos = Input_GetUser(0)->mousePos;
+
+			if (
+				(mousePos.x >= entry->rect.x) && (mousePos.y >= entry->rect.y) &&
+				(mousePos.x < entry->rect.x + entry->rect.w) &&
+				(mousePos.y < entry->rect.y + entry->rect.h)
+			) {
+				table->entries[table->selected].onAction(table->entries + table->selected);
+			}
+			break; // TODO: ditto
+		}
 		case SDL_KEYDOWN: {
 			if (Input_ActionPressed(ACTION_TABLE_SELECT_UP, event)) {
 				if (table->selected < table->columns) return;

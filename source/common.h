@@ -8,4 +8,6 @@
 #include <assert.h>
 #include <sys/param.h>
 
+#define PI 3.14159265359
+
 #endif

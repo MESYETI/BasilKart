@@ -8,10 +8,10 @@ void Input_Init(void) {
 	input.numUsers = 0;
 
 	if (SDL_GetDefaultCursor() == NULL) {
-		Input_AddUser((InputUser) {INPUT_KEYBOARD});
+		Input_AddUser((InputUser) {INPUT_KEYBOARD, (Vec2) {0, 0}});
 	}
 	else {
-		Input_AddUser((InputUser) {INPUT_KEYBOARD | INPUT_MOUSE});
+		Input_AddUser((InputUser) {INPUT_KEYBOARD | INPUT_MOUSE, (Vec2) {0, 0}});
 	}
 }
 
@@ -57,10 +57,10 @@ bool Input_ActionActive(size_t actionIndex) {
 }
 
 bool Input_ActionPressed(size_t actionIndex, SDL_Event* e) {
-	assert(e->type == SDL_KEYDOWN);
 	InputAction* action = input.actions + actionIndex;
 
 	if (Input_KeyboardAvailable() && (action->key[0] == e->key.keysym.scancode)) {
+		assert(e->type == SDL_KEYDOWN);
 		const uint8_t* keys = SDL_GetKeyboardState(NULL);
 
 		for (size_t i = 1; i < action->keyAmount; ++ i) {
@@ -70,4 +70,19 @@ bool Input_ActionPressed(size_t actionIndex, SDL_Event* e) {
 		return true;
 	}
 	else return false;
+}
+
+void Input_HandleEvent(SDL_Event* e) {
+	switch (e->type) {
+		case SDL_MOUSEMOTION: {
+			input.users[0].mousePos = (Vec2) {e->motion.x, e->motion.y};
+			break;
+		}
+		default: break;
+	}
+}
+
+InputUser* Input_GetUser(size_t which) {
+	assert(which < input.numUsers);
+	return input.users + which;
 }

@@ -1,15 +1,14 @@
 #include <string.h>
 #include "util.h"
 #include "safe.h"
-
-#define M_PI 3.14159265359
+#include "common.h"
 
 double RadToDeg(double rad) {
-	return rad * 180 / M_PI;
+	return rad * 180 / PI;
 }
 
 double DegToRad(double deg) {
-	return deg * (M_PI / 180);
+	return deg * (PI / 180);
 }
 
 double CosDeg(double deg) {

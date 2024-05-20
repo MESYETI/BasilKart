@@ -31,6 +31,9 @@ enum {
 
 typedef struct {
 	uint8_t types;
+
+	// mouse
+	Vec2 mousePos;
 } InputUser;
 
 typedef struct {
@@ -44,12 +47,14 @@ typedef struct {
 	InputAction actions[ACTION_AMOUNT];
 } InputManager;
 
-void Input_Init(void);
-void Input_Free(void);
-void Input_AddUser(InputUser user);
-bool Input_KeyboardAvailable(void);
-void Input_BindKey(size_t keybind, SDL_Scancode key);
-bool Input_ActionActive(size_t actionIndex);
-bool Input_ActionPressed(size_t actionIndex, SDL_Event* e);
+void       Input_Init(void);
+void       Input_Free(void);
+void       Input_AddUser(InputUser user);
+bool       Input_KeyboardAvailable(void);
+void       Input_BindKey(size_t keybind, SDL_Scancode key);
+bool       Input_ActionActive(size_t actionIndex);
+bool       Input_ActionPressed(size_t actionIndex, SDL_Event* e);
+void       Input_HandleEvent(SDL_Event* e);
+InputUser* Input_GetUser(size_t which);
 
 #endif

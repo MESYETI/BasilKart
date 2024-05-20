@@ -64,6 +64,7 @@ void App_Update() {
 				break;
 			}
 			default: {
+				Input_HandleEvent(&e);
 				app.scene->handleEvent(&e);
 			}
 		}
