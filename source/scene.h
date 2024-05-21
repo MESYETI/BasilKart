@@ -1,7 +1,6 @@
 #ifndef BK_SCENE_H
 #define BK_SCENE_H
 
-#include <SDL2/SDL.h>
 #include "util.h"
 #include "gfx/canvas.h"
 

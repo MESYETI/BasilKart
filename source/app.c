@@ -1,6 +1,7 @@
 #include "app.h"
 #include "game.h"
 #include "input.h"
+#include "platform.h"
 #include "constants.h"
 #include "titlescreen.h"
 #include "gfx/image.h"
@@ -12,6 +13,8 @@ App* App_Instance(void) {
 }
 
 void App_Init() {
+	Platform_Init();
+
 	app.running = true;
 	GFX_InitScreen(&app.screen, APP_WIN_WIDTH, APP_WIN_HEIGHT);
 	GFX_NewCanvas(&app.canvas, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -45,6 +48,8 @@ void App_Init() {
 }
 
 void App_Free() {
+	Platform_Free();
+
 	GFX_FreeScreen(&app.screen);
 	app.scene->free();
 

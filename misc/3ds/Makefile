@@ -31,9 +31,9 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	BasilKart
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	../../source $(wildcard ../../source/**)
 DATA		:=	data
 INCLUDES	:=	include
 GRAPHICS	:=	gfx
@@ -57,7 +57,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lctru -lm -lSDL2
+LIBS	:= -lSDL2 -lm -lctru 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

@@ -1,7 +1,6 @@
 #ifndef BK_GFX_SCREEN_H
 #define BK_GFX_SCREEN_H
 
-#include <SDL2/SDL.h>
 #include "canvas.h"
 #include "../common.h"
 

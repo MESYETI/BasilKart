@@ -16,9 +16,15 @@ void GFX_InitScreen(GFX_Screen* screen, size_t width, size_t height) {
 		exit(1);
 	}
 
-	screen->renderer = SDL_CreateRenderer(
-		screen->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-	);
+	#ifdef __3DS__
+		screen->renderer = SDL_CreateRenderer(
+			screen->window, -1, SDL_RENDERER_PRESENTVSYNC
+		);
+	#else
+		screen->renderer = SDL_CreateRenderer(
+			screen->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+		);
+	#endif
 
 	if (screen->renderer == NULL) {
 		fprintf(stderr, "Failed to create renderer: %s\n", SDL_GetError());

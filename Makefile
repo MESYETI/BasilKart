@@ -26,4 +26,7 @@ bin/%.o: source/%.c $(DEPS)
 
 clean:
 	rm -r bin/* $(OUT)
+	if [ -f bin ]; then rm -r bin; fi
+	if [ -f $(OUT) ]; then rm $(OUT); fi
+
 

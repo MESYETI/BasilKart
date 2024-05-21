@@ -47,7 +47,7 @@ static void Init(void) {
 	camera.dirH = 0.0;
 	camera.dirV = 0.0;
 
-	UI_AddManagerElement(&ui, UI_NewTable(0, 160, 136, 64, 1));
+	UI_AddManagerElement(&ui, UI_NewTable(0, 160, 152, 64, 1));
 	tableElem = UI_GetLastElement(&ui);
 	table     = (UI_Table*) tableElem->data;
 	UI_SetTableElementSize(tableElem, 180, 16);
@@ -55,13 +55,13 @@ static void Init(void) {
 	UI_CenterElement(tableElem);
 
 	UI_AddTableEntry(tableElem, UI_NewButton(
-		UI_BUTTON_STYLE_ARROWS, &app->font, "Grand prix", &PlayButton
-	));
-	UI_AddTableEntry(tableElem, UI_NewButton(
-		UI_BUTTON_STYLE_ARROWS, &app->font, "Time trial", &PlayButton
+		UI_BUTTON_STYLE_ARROWS, &app->font, "Singleplayer", &PlayButton
 	));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Multiplayer", NULL
+	));
+	UI_AddTableEntry(tableElem, UI_NewButton(
+		UI_BUTTON_STYLE_ARROWS, &app->font, "Track Builder", NULL
 	));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Options", NULL

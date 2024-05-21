@@ -8,6 +8,9 @@
 #include <assert.h>
 #include <sys/param.h>
 
+#include <SDL2/SDL.h>
+#undef main
+
 #define PI 3.14159265359
 
 #endif

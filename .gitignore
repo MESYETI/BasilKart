@@ -1,3 +1,7 @@
 BasilKart
 bin
 bin/*
+misc/3ds/BasilKart.3dsx
+misc/3ds/BasilKart.elf
+misc/3ds/BasilKart.smdh
+misc/3ds/build

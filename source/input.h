@@ -1,7 +1,6 @@
 #ifndef BK_INPUT_H
 #define BK_INPUT_H
 
-#include <SDL2/SDL.h>
 #include "common.h"
 #include "types.h"
 

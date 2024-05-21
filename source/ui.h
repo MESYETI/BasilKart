@@ -1,7 +1,6 @@
 #ifndef BK_UI_H
 #define BK_UI_H
 
-#include <SDL2/SDL.h>
 #include "util.h"
 #include "types.h"
 #include "common.h"
