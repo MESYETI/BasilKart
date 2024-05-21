@@ -45,6 +45,14 @@ void App_Init() {
 	Input_BindKey(ACTION_TABLE_SELECT_UP,    SDL_SCANCODE_UP);
 	Input_BindKey(ACTION_TABLE_SELECT_DOWN,  SDL_SCANCODE_DOWN);
 	Input_BindKey(ACTION_TABLE_SELECT,       SDL_SCANCODE_RETURN);
+
+	#ifdef __3DS__
+		app.settings.renderSky = false;
+		app.settings.renderFog = false;
+	#else
+		app.settings.renderSky = true;
+		app.settings.renderFog = true;
+	#endif
 }
 
 void App_Free() {

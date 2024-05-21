@@ -1,3 +1,4 @@
+#include "app.h"
 #include "map.h"
 #include "safe.h"
 #include "util.h"
@@ -161,6 +162,7 @@ void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
 
 void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 	// draw skybox
+	App*     app        = App_Instance();
 	GFX_Rect skyboxDest = {0, 0, 320, APP_WIN_HEIGHT}; /* draw on entire window temporarily */
 	GFX_Rect skyboxSrc  = {0, 0, 320, 92};
 	GFX_BlitCanvas(canvas, &map->skybox, &skyboxDest, &skyboxSrc);
@@ -208,14 +210,25 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 				pixelIndex.y += tileDef->textureY * APP_TILE_HEIGHT;
 			}
 
-			GFX_DrawPixel(
-				canvas, pixel.x, pixel.y,
-				FogifyPixel(
-					GFX_GetPixel(&map->texture, pixelIndex.x, pixelIndex.y), distance
-				)
-			);
+			if (app->settings.renderFog) {
+				GFX_DrawPixel(
+					canvas, pixel.x, pixel.y,
+					FogifyPixel(
+						GFX_GetPixel(&map->texture, pixelIndex.x, pixelIndex.y), 
+						distance
+					)
+				);
+			}
+			else {
+				GFX_DrawPixel(
+					canvas, pixel.x, pixel.y,
+					GFX_GetPixel(&map->texture, pixelIndex.x, pixelIndex.y)
+				);
+			}
 		}
 	}
+
+	if (!app->settings.renderSky) goto afterSky;
 
 	for (size_t x = 0; x < APP_WIN_WIDTH; ++ x) {
 		for (int y = 0; y <= centerY + camera.dirV; ++ y) {
@@ -245,19 +258,32 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 				(int) (tilePixel.y * ((double) map->clouds.height))
 			};
 
-			GFX_DrawPixel(
-				canvas, pixel.x, pixel.y,
-				FogifyPixel(
-					GFX_GetPixel(&map->clouds, pixelIndex.x, pixelIndex.y), distance
-				)
-			);
+			if (app->settings.renderFog) {
+				GFX_DrawPixel(
+					canvas, pixel.x, pixel.y,
+					FogifyPixel(
+						GFX_GetPixel(&map->clouds, pixelIndex.x, pixelIndex.y), 
+						distance
+					)
+				);
+			}
+			else {
+				GFX_DrawPixel(
+					canvas, pixel.x, pixel.y,
+					GFX_GetPixel(&map->clouds, pixelIndex.x, pixelIndex.y)
+				);
+			}
 		}
 	}
 	// TODO: Multiply cloudsSpeed by delta time
 	map->cloudsOffset += cloudsSpeed;
 
+
 	// draw test sprite
 	MapSprite sprite;
+
+	afterSky: // C wants me to put it here for some reason
+
 	sprite.x      = 10.0;
 	sprite.y      = 10.0;
 	sprite.canvas = testSprite;
