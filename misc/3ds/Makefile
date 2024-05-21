@@ -31,15 +31,19 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-TARGET		:=	BasilKart
-BUILD		:=	build
-SOURCES		:=	../../source $(wildcard ../../source/**)
-DATA		:=	data
-INCLUDES	:=	include
-GRAPHICS	:=	gfx
-GFXBUILD	:=	$(BUILD)
-#ROMFS		:=	romfs
-#GFXBUILD	:=	$(ROMFS)/gfx
+TARGET          := BasilKart
+BUILD           := build
+SOURCES         := ../../source $(wildcard ../../source/**)
+DATA            := data
+INCLUDES        := include
+GRAPHICS        := gfx
+GFXBUILD        := $(BUILD)
+#ROMFS          := romfs
+#GFXBUILD       := $(ROMFS)/gfx
+APP_TITLE       := Basil Kart
+APP_DESCRIPTION := Kart game with SNES inspired graphics
+APP_AUTHOR      := yeti0904
+ICON            := icon.png
 
 #---------------------------------------------------------------------------------
 # options for code generation
