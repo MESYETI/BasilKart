@@ -24,8 +24,8 @@ static char* GetLabel(UI_TableEntry* this) {
 	char*      label;
 
 	if (this->parent->selected == this->thisIndex) {
-		label = SafeMalloc(strlen(button->label + 5));
-		sprintf(label, "> %s <", button->label);
+		label = SafeMalloc(strlen(button->label) + 5);
+		sprintf(label, "> %s <", button->label); // here
 		return label;
 	}
 	else {
