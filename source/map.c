@@ -23,10 +23,10 @@ void Map_Init(Map* map, int width, int height) {
 	map->cloudsOffset = 0;
 
 	for (int i = 0; i < APP_WIN_WIDTH; ++ i) {
-		rayDirMap[i] = RadToDeg(atan2(
+		rayDirMap[i] = atan2(
 			DegToRad(i - APP_WIN_WIDTH / 2),
 			DegToRad(APP_WIN_WIDTH / 2 / tan(DegToRad(APP_FOV / 2)))
-		));
+		);
 	}
 
 	GFX_LoadImage(&map->texture, "assets/tiles.bmp");
@@ -110,25 +110,25 @@ static GFX_Pixel FogifyPixel(GFX_Pixel pixel, double distance) {
 }
 
 void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
-	double angle  = RadToDeg(atan2(sprite->y - camera.pos.y, sprite->x - camera.pos.x));
+	double angle  = atan2(sprite->y - camera.pos.y, sprite->x - camera.pos.x);
 	angle        -= camera.dirH;
 
-	while (angle < -180) angle += 360;
-	while (angle >= 180) angle -= 360;
+	while (angle <  DegToRad(-180)) angle += DegToRad(360);
+	while (angle >= DegToRad(180))  angle -= DegToRad(360);
 
-	if ((angle > 45.0) || (angle < -45.0)) return;
+	if ((angle > DegToRad(45.0)) || (angle < DegToRad(-45.0))) return;
 
 	double distance = sqrt(
 		pow(camera.pos.y - sprite->y, 2) + pow(camera.pos.x - sprite->x, 2)
 	);
 
 	int x = (int) RadToDeg(
-		tan(DegToRad(angle)) *
+		tan(angle) *
 		DegToRad(APP_WIN_WIDTH / 2 / tan(DegToRad(APP_FOV / 2)))
 	) + APP_WIN_WIDTH / 2; // complicated math by lurnie
 
 	// Fix fisheye
-	distance *= CosDeg(rayDirMap[x]);
+	distance *= rayDirMap[x];
 
 	double h = 1;
 	// height of sprite in the world, 1 is player height, 0.5 is half player height...
@@ -171,15 +171,15 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 		for (int y = 0; y <= centerY - camera.dirV; ++ y) {
 			double direction = rayDirMap[x] + camera.dirH;
 			double distance  = ((double) (APP_WIN_HEIGHT)) / ((double) y) * (camera.pos.z);
-			distance        /= CosDeg(camera.dirH - direction);
+			distance        /= cos(camera.dirH - direction);
 
 			if (distance > maxDist) {
 				continue;
 			}
 
 			FVec2 pixelPos = {
-				CosDeg(direction) * distance + camera.pos.x + 0.5,
-				SinDeg(direction) * distance + camera.pos.y + 0.5
+				cos(direction) * distance + camera.pos.x + 0.5,
+				sin(direction) * distance + camera.pos.y + 0.5
 			};
 			Vec2 tilePos = {
 				floor(pixelPos.x), floor(pixelPos.y)
@@ -234,15 +234,15 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 		for (int y = 0; y <= centerY + camera.dirV; ++ y) {
 			double direction = rayDirMap[x] + camera.dirH;
 			double distance  = ((double) (APP_WIN_HEIGHT)) / ((double) y) * (camera.pos.z + cloudsY);
-			distance        /= CosDeg(camera.dirH - direction);
+			distance        /= cos(camera.dirH - direction);
 
 			if (distance > maxDist) {
 				continue;
 			}
 
 			FVec2 pixelPos = {
-				(CosDeg(direction) * distance + camera.pos.x + 0.5) / cloudsScale + map->cloudsOffset,
-				(SinDeg(direction) * distance + camera.pos.y + 0.5) / cloudsScale + map->cloudsOffset
+				(cos(direction) * distance + camera.pos.x + 0.5) / cloudsScale + map->cloudsOffset,
+				(sin(direction) * distance + camera.pos.y + 0.5) / cloudsScale + map->cloudsOffset
 			};
 			Vec2 tilePos = {
 				floor(pixelPos.x), floor(pixelPos.y)
@@ -276,8 +276,8 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 		}
 	}
 	// TODO: Multiply cloudsSpeed by delta time
+	// ok rei
 	map->cloudsOffset += cloudsSpeed;
-
 
 	// draw test sprite
 	MapSprite sprite;

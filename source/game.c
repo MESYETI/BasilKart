@@ -29,43 +29,43 @@ static void Update(void) {
 		game.camera.pos.y += sin(DegToRad(game.camera.dirH)) * 0.1;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LEFT)) {
-		game.camera.pos.x += cos(DegToRad(game.camera.dirH - 90)) * 0.1;
-		game.camera.pos.y += sin(DegToRad(game.camera.dirH - 90)) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH - DegToRad(90)) * 0.1;
+		game.camera.pos.y += sin(game.camera.dirH - DegToRad(90)) * 0.1;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_BACKWARDS)) {
-		game.camera.pos.x += cos(DegToRad(game.camera.dirH + 180)) * 0.1;
-		game.camera.pos.y += sin(DegToRad(game.camera.dirH + 180)) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH + DegToRad(180)) * 0.1;
+		game.camera.pos.y += sin(game.camera.dirH + DegToRad(180)) * 0.1;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_RIGHT)) {
-		game.camera.pos.x += cos(DegToRad(game.camera.dirH + 90)) * 0.1;
-		game.camera.pos.y += sin(DegToRad(game.camera.dirH + 90)) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH + DegToRad(90)) * 0.1;
+		game.camera.pos.y += sin(game.camera.dirH + DegToRad(90)) * 0.1;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_LEFT)) {
-		game.camera.dirH -= 3.0;
+		game.camera.dirH -= DegToRad(3.0);
 
-		while (game.camera.dirH < -180) {
-			game.camera.dirH += 360.0;
+		while (game.camera.dirH < DegToRad(-180)) {
+			game.camera.dirH += DegToRad(360.0);
 		}
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_RIGHT)) {
-		game.camera.dirH += 3.0;
+		game.camera.dirH += DegToRad(3.0);
 
-		while (game.camera.dirH > 180) {
-			game.camera.dirH -= 360;
+		while (game.camera.dirH > DegToRad(180)) {
+			game.camera.dirH -= DegToRad(360);
 		}
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_UP)) {
-		game.camera.dirV += 3.0;
+		game.camera.dirV += DegToRad(3.0);
 
-		if (game.camera.dirV > 180) {
-			game.camera.dirV = 180;
+		if (game.camera.dirV > DegToRad(180)) {
+			game.camera.dirV = DegToRad(180);
 		}
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_DOWN)) {
-		game.camera.dirV -= 3.0;
+		game.camera.dirV -= DegToRad(3.0);
 
-		if (game.camera.dirV < -180) {
-			game.camera.dirV = -180;
+		if (game.camera.dirV < DegToRad(-180)) {
+			game.camera.dirV = DegToRad(-180);
 		}
 	}
 }

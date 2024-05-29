@@ -11,14 +11,6 @@ double DegToRad(double deg) {
 	return deg * (PI / 180);
 }
 
-double CosDeg(double deg) {
-	return cos(DegToRad(deg));
-}
-
-double SinDeg(double deg) {
-	return sin(DegToRad(deg));
-}
-
 double Lerp(double a, double b, double t) {
     return a * (1.0 - t) + (b * t);
 }
