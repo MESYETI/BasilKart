@@ -128,7 +128,7 @@ void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
 	) + APP_WIN_WIDTH / 2; // complicated math by lurnie
 
 	// Fix fisheye
-	distance *= rayDirMap[x];
+	distance *= cos(rayDirMap[x]);
 
 	double h = 1;
 	// height of sprite in the world, 1 is player height, 0.5 is half player height...
