@@ -55,18 +55,10 @@ static void Update(void) {
 		}
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_UP)) {
-		game.camera.dirV += DegToRad(3.0);
-
-		if (game.camera.dirV > DegToRad(180)) {
-			game.camera.dirV = DegToRad(180);
-		}
+		game.camera.dirV += 3.0;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_DOWN)) {
-		game.camera.dirV -= DegToRad(3.0);
-
-		if (game.camera.dirV < DegToRad(-180)) {
-			game.camera.dirV = DegToRad(-180);
-		}
+		game.camera.dirV -= 3.0;
 	}
 }
 
