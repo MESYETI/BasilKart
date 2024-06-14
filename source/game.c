@@ -7,7 +7,7 @@
 #include "gfx/image.h"
 #include "gfx/canvas.h"
 
-Game game;
+static Game game;
 
 static void Init(void) {
 	Map_Init(&game.map, 32, 32);
@@ -17,6 +17,8 @@ static void Init(void) {
 	game.camera.pos  = (FVec3) {12.0, 16.0, 0.5};
 	game.camera.dirH = 0.0;
 	game.camera.dirV = 0.0;
+
+	//game.camera.pos.x = 900719925474.0;
 }
 
 static void Free(void) {
@@ -24,21 +26,23 @@ static void Free(void) {
 }
 
 static void Update(void) {
+	double speed = 0.025;
+
 	if (Input_ActionActive(ACTION_CAMERA_FORWARD)) {
-		game.camera.pos.x += cos(game.camera.dirH) * 0.1;
-		game.camera.pos.y += sin(game.camera.dirH) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH) * speed;
+		game.camera.pos.y += sin(game.camera.dirH) * speed;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LEFT)) {
-		game.camera.pos.x += cos(game.camera.dirH - DegToRad(90)) * 0.1;
-		game.camera.pos.y += sin(game.camera.dirH - DegToRad(90)) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH - DegToRad(90)) * speed;
+		game.camera.pos.y += sin(game.camera.dirH - DegToRad(90)) * speed;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_BACKWARDS)) {
-		game.camera.pos.x += cos(game.camera.dirH + DegToRad(180)) * 0.1;
-		game.camera.pos.y += sin(game.camera.dirH + DegToRad(180)) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH + DegToRad(180)) * speed;
+		game.camera.pos.y += sin(game.camera.dirH + DegToRad(180)) * speed;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_RIGHT)) {
-		game.camera.pos.x += cos(game.camera.dirH + DegToRad(90)) * 0.1;
-		game.camera.pos.y += sin(game.camera.dirH + DegToRad(90)) * 0.1;
+		game.camera.pos.x += cos(game.camera.dirH + DegToRad(90)) * speed;
+		game.camera.pos.y += sin(game.camera.dirH + DegToRad(90)) * speed;
 	}
 	if (Input_ActionActive(ACTION_CAMERA_LOOK_LEFT)) {
 		game.camera.dirH -= DegToRad(3.0);

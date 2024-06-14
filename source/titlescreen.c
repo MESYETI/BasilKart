@@ -11,6 +11,7 @@
 #include "gfx/image.h"
 #include "gfx/canvas.h"
 #include "titlescreen.h"
+#include "trackEditor.h"
 
 #define LOGO_HEIGHT 41
 
@@ -26,7 +27,16 @@ static void PlayButton(UI_TableEntry* this) {
 	UNUSED(this);
 
 	App* app   = App_Instance();
-	app->scene = app->scene + APPSCENE_GAME;
+	app->scene = app->scenes + APPSCENE_GAME;
+	app->scene->init();
+	Free();
+}
+
+static void TrackEditorButton(UI_TableEntry* this) {
+	UNUSED(this);
+
+	App* app   = App_Instance();
+	app->scene = app->scenes + APPSCENE_TRACK_EDITOR;
 	app->scene->init();
 	Free();
 }
@@ -61,7 +71,7 @@ static void Init(void) {
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Multiplayer", NULL
 	));
 	UI_AddTableEntry(tableElem, UI_NewButton(
-		UI_BUTTON_STYLE_ARROWS, &app->font, "Track Builder", NULL
+		UI_BUTTON_STYLE_ARROWS, &app->font, "Track Editor", &TrackEditorButton
 	));
 	UI_AddTableEntry(tableElem, UI_NewButton(
 		UI_BUTTON_STYLE_ARROWS, &app->font, "Options", NULL

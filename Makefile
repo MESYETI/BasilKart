@@ -1,9 +1,16 @@
 SRC   = $(wildcard source/*.c) $(wildcard source/**/*.c)
 DEPS  = $(wildcard source/*.h) $(wildcard source/**/*.h)
 OBJ   = $(addsuffix .o,$(subst source/,bin/,$(basename ${SRC})))
-LIBS  = -lSDL2 -lm
-FLAGS = -std=c99 -Wall -Wextra -pedantic -g -I./lib
 OUT   = BasilKart
+FLAGS = -std=c99 -Wall -Wextra -pedantic -g
+
+ifeq ($(PLAT), windows)
+	CC     = x86_64-w64-mingw32-gcc
+	LIBS   = $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
+	FLAGS += $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
+else
+	LIBS = -lSDL2 -lm
+endif
 
 ifeq ($(BUILD), release)
 	FLAGS += -O3

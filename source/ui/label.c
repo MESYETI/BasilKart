@@ -19,7 +19,7 @@ static void Render(GFX_Canvas* canvas, UI_TableEntry* this) {
 	Vec2      labelSize = GFX_TextSize(label->font, label->label);
 	Vec2      labelPos  = (Vec2) {
 		this->rect.x,
-		this->rect.y + (this->rect.h / 2) - (labelSize.y / 2)
+		this->rect.y + (this->rect.h / 2) - (labelSize.y / 2) - 1
 	};
 
 	GFX_DrawText(label->font, canvas, label->label, labelPos.x, labelPos.y);

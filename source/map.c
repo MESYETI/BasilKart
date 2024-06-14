@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include "app.h"
 #include "map.h"
 #include "safe.h"
 #include "util.h"
 #include "game.h"
+#include "input.h"
 #include "types.h"
 #include "constants.h"
 #include "gfx/image.h"
@@ -34,53 +36,20 @@ void Map_Init(Map* map, int width, int height) {
 
 	map->tiles = SafeMalloc(sizeof(MapTile) * width * height);
 
-	map->tileDefs[0x00] = (MapTileDef) { // corner road
+	map->tileDefs[0] = (MapTileDef) { // grass
 		.textureX = 0, .textureY = 0
 	};
-	map->tileDefs[0x10] = (MapTileDef) { // road V west
+	map->tileDefs[1] = (MapTileDef) { // straight road
 		.textureX = 1, .textureY = 0
-	};
-	map->tileDefs[0x11] = (MapTileDef) { // road V east
-		.textureX = 1, .textureY = 1
-	};
-	map->tileDefs[0x12] = (MapTileDef) { // road H north
-		.textureX = 1, .textureY = 2
-	};
-	map->tileDefs[0x13] = (MapTileDef) { // road H south
-		.textureX = 1, .textureY = 3
-	};
-	map->tileDefs[0x20] = (MapTileDef) { // grass
-		.textureX = 2, .textureY = 0
-	};
-	map->tileDefs[0x30] = (MapTileDef) { // road bounds V east
-		.textureX = 3, .textureY = 0
-	};
-	map->tileDefs[0x31] = (MapTileDef) { // road bounds V west
-		.textureX = 3, .textureY = 1
-	};
-	map->tileDefs[0x32] = (MapTileDef) { // road bounds H south
-		.textureX = 3, .textureY = 2
-	};
-	map->tileDefs[0x33] = (MapTileDef) { // road bounds H north
-		.textureX = 3, .textureY = 3
 	};
 
 	for (int x = 0; x < width; ++ x) {
 		for (int y = 0; y < height; ++ y) {
-			if (x == 12) {
-				Map_GetTile(map, x, y)->id = 0x30;
-			}
-			else if (x == 13) {
-				Map_GetTile(map, x, y)->id = 0x10;
-			}
-			else if (x == 14) {
-				Map_GetTile(map, x, y)->id = 0x11;
-			}
-			else if (x == 15) {
-				Map_GetTile(map, x, y)->id = 0x31;
+			if (x == 14) {
+				Map_GetTile(map, x, y)->id = 1;
 			}
 			else {
-				Map_GetTile(map, x, y)->id = 0x20;
+				Map_GetTile(map, x, y)->id = 0;
 			}
 		}
 	}
@@ -120,7 +89,7 @@ void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
 
 	double distance = sqrt(
 		pow(camera.pos.y - sprite->y, 2) + pow(camera.pos.x - sprite->x, 2)
-	);
+	) * 4;
 
 	int x = (int) RadToDeg(
 		tan(angle) *
@@ -172,6 +141,7 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 			double direction = rayDirMap[x] + camera.dirH;
 			double distance  = ((double) (APP_WIN_HEIGHT)) / ((double) y) * (camera.pos.z);
 			distance        /= cos(camera.dirH - direction);
+			distance        *= 0.25;
 
 			if (distance > maxDist) {
 				continue;
@@ -195,11 +165,17 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 				(int) (tilePixel.y * ((double) APP_TILE_HEIGHT))
 			};
 
+			// TODO: remove this, its just for seeing if basil kart has the far lands
+			if (pixelIndex.x < 0) pixelIndex.x = -pixelIndex.x;
+			if (pixelIndex.y < 0) pixelIndex.y = -pixelIndex.y;
+			pixelIndex.x %= APP_TILE_WIDTH;
+			pixelIndex.y %= APP_TILE_HEIGHT;
+
 			if (
 				(tilePos.x < 0) || (tilePos.y < 0) || (tilePos.x >= map->width) ||
 				(tilePos.y >= map->height)
 			) {
-				pixelIndex.x += 64;
+				//pixelIndex.x += 64;
 			}
 			else {
 				MapTileDef* tileDef = &map->tileDefs[
@@ -235,6 +211,7 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 			double direction = rayDirMap[x] + camera.dirH;
 			double distance  = ((double) (APP_WIN_HEIGHT)) / ((double) y) * (camera.pos.z + cloudsY);
 			distance        /= cos(camera.dirH - direction);
+			//distance        *= 0.25;
 
 			if (distance > maxDist) {
 				continue;
@@ -257,6 +234,12 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 				(int) (tilePixel.x * ((double) map->clouds.width)),
 				(int) (tilePixel.y * ((double) map->clouds.height))
 			};
+
+			// TODO: remove this, its just for seeing if basil kart has the far lands
+			if (pixelIndex.x < 0) pixelIndex.x = -pixelIndex.x;
+			if (pixelIndex.y < 0) pixelIndex.y = -pixelIndex.y;
+			pixelIndex.x %= map->clouds.width;
+			pixelIndex.y %= map->clouds.height;
 
 			if (app->settings.renderFog) {
 				GFX_DrawPixel(
@@ -302,4 +285,59 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 	if (cameraZ < 0.05)
 		cameraZ = 0.05;*/ // terrible code by LordOfTrident
 	// ^ theres nothing terrible about that code yeti
+	// shut up
+}
+
+void Map_Render2D(Map* map, GFX_Canvas* canvas, struct Camera2D camera) {
+	Vec2 end;
+	end.x = ((int) camera.x) + (APP_WIN_WIDTH / APP_TILE_WIDTH) + 2;
+	end.y = ((int) camera.y) + (APP_WIN_HEIGHT / APP_TILE_HEIGHT) + 2;
+
+	Vec2 start;
+	start.x = camera.x > 0? (int) camera.x : 0;
+	start.y = camera.y > 0? (int) camera.y : 0;
+
+	Vec2 mousePos = Input_GetUser(0)->mousePos;
+
+	map->selected = (Vec2) {-1, -1};
+
+	for (int y = start.y; (y < end.y) && (y < map->height); ++ y) {
+		for (int x = start.x; (x < end.x) && (x < map->width); ++ x) {
+			GFX_Rect tileRect = (GFX_Rect) {
+				(x * APP_TILE_WIDTH) - (int) (camera.x * APP_TILE_WIDTH),
+				(y * APP_TILE_HEIGHT) - (int) (camera.y * APP_TILE_HEIGHT),
+				APP_TILE_WIDTH,
+				APP_TILE_HEIGHT
+			};
+			MapTile*    tile = Map_GetTile(map, x, y);
+			MapTileDef* def  = &map->tileDefs[tile->id];
+			// TODO: if i ever allow custom maps in multiplayer then this is a
+			// vulnerability
+
+			GFX_Rect textureSrc = (GFX_Rect) {
+				def->textureX * APP_TILE_WIDTH,
+				def->textureY * APP_TILE_HEIGHT,
+				APP_TILE_WIDTH, APP_TILE_HEIGHT
+			};
+			GFX_BlitCanvas(canvas, &map->texture, &tileRect, &textureSrc);
+
+			GFX_VLine(
+				canvas, tileRect.x, tileRect.y, tileRect.h,
+				GFX_ColourToPixel(255, 255, 255, 255)
+			);
+			GFX_HLine(
+				canvas, tileRect.x, tileRect.y, tileRect.w,
+				GFX_ColourToPixel(255, 255, 255, 255)
+			);
+
+			if (
+				(mousePos.x >= tileRect.x) && (mousePos.y >= tileRect.y) &&
+				(mousePos.x < tileRect.x + tileRect.w) &&
+				(mousePos.y < tileRect.y + tileRect.h)
+			) {
+				map->selected = (Vec2) {x, y};
+				GFX_DrawRect(canvas, tileRect, GFX_ColourToPixel(255, 0, 0, 255));
+			}
+		}
+	}
 }

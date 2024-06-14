@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "app.h"
+#include "util.h"
 #include "safe.h"
 #include "input.h"
 #include "constants.h"

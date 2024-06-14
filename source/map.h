@@ -5,6 +5,7 @@
 #include "gfx/canvas.h"
 
 struct Camera;
+struct Camera2D;
 
 typedef struct {
 	double     x, y, z;
@@ -30,11 +31,13 @@ typedef struct {
 	GFX_Canvas skybox;
 	GFX_Canvas clouds;
 	float      cloudsOffset;
+	Vec2       selected;
 } Map;
 
 void     Map_Init(Map* map, int width, int height);
 MapTile* Map_GetTile(Map* map, int x, int y);
 void     Map_RenderSprite(GFX_Canvas* canvas, struct Camera camera, MapSprite* sprite);
 void     Map_Render(Map* map, GFX_Canvas* canvas, struct Camera camera);
+void     Map_Render2D(Map* map, GFX_Canvas* canvas, struct Camera2D camera);
 
 #endif

@@ -1,9 +1,12 @@
+#include <stdio.h>
 #include "app.h"
+#include "util.h"
 #include "game.h"
 #include "input.h"
 #include "platform.h"
 #include "constants.h"
 #include "titlescreen.h"
+#include "trackEditor.h"
 #include "gfx/image.h"
 
 static App app;
@@ -15,6 +18,8 @@ App* App_Instance(void) {
 void App_Init() {
 	Platform_Init();
 
+	Log("Starting Basil Kart");
+
 	app.running = true;
 	GFX_InitScreen(&app.screen, APP_WIN_WIDTH, APP_WIN_HEIGHT);
 	GFX_NewCanvas(&app.canvas, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -22,8 +27,11 @@ void App_Init() {
 	app.font = GFX_LoadFont("assets/font.bmp", 8, 8);
 	GFX_LoadImage(&app.uiTexture, "assets/ui.bmp");
 
-	app.scenes[APPSCENE_TITLESCREEN] = TitlescreenScene();
-	app.scenes[APPSCENE_GAME]        = GameScene();
+	Log("Font loaded");
+
+	app.scenes[APPSCENE_TITLESCREEN]  = TitlescreenScene();
+	app.scenes[APPSCENE_GAME]         = GameScene();
+	app.scenes[APPSCENE_TRACK_EDITOR] = TrackEditorScene();
 	app.scene = app.scenes + APPSCENE_TITLESCREEN;
 	app.scene->init();
 
@@ -45,6 +53,11 @@ void App_Init() {
 	Input_BindKey(ACTION_TABLE_SELECT_UP,    SDL_SCANCODE_UP);
 	Input_BindKey(ACTION_TABLE_SELECT_DOWN,  SDL_SCANCODE_DOWN);
 	Input_BindKey(ACTION_TABLE_SELECT,       SDL_SCANCODE_RETURN);
+	Input_BindKey(ACTION_VIEW_SCROLL_UP,     SDL_SCANCODE_W);
+	Input_BindKey(ACTION_VIEW_SCROLL_DOWN,   SDL_SCANCODE_S);
+	Input_BindKey(ACTION_VIEW_SCROLL_LEFT,   SDL_SCANCODE_A);
+	Input_BindKey(ACTION_VIEW_SCROLL_RIGHT,  SDL_SCANCODE_D);
+	Input_BindKey(ACTION_VIEW_SCROLL_FAST,   SDL_SCANCODE_LSHIFT);
 
 	#ifdef __3DS__
 		app.settings.renderSky = false;
@@ -53,6 +66,8 @@ void App_Init() {
 		app.settings.renderSky = true;
 		app.settings.renderFog = true;
 	#endif
+
+	Log("Game ready");
 }
 
 void App_Free() {
@@ -90,17 +105,18 @@ void App_Update() {
 	deltaNow      = SDL_GetPerformanceCounter();
 	app.deltaTime =
 		(double) ((deltaNow - deltaLast) * 1000 / (double) SDL_GetPerformanceFrequency());
-	app.fps = 1000 / app.deltaTime;
+	app.fps       = 1000 / app.deltaTime;
+	app.deltaTime = app.deltaTime / 1000.0;
 
 	if (app.ticks % 60 == 0) {
 		lastFps = app.fps;
 	}
 
-	GFX_DrawText(&app.font, &app.canvas, "Basil Kart BETA", 1, 1);
-
-	char infoText[50];
-	sprintf(infoText, "FPS: %d", (int) round(lastFps));
-	GFX_DrawText(&app.font, &app.canvas, infoText, 1, 10);
+//	GFX_DrawText(&app.font, &app.canvas, "Basil Kart BETA", 1, 1);
+//
+//	char infoText[50];
+	//sprintf(infoText, "FPS: %d", (int) round(lastFps));
+	//GFX_DrawText(&app.font, &app.canvas, infoText, 1, 10);
 
 	GFX_RenderScreen(&app.screen, &app.canvas);
 

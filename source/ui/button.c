@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "button.h"
 #include "../safe.h"
 #include "../util.h"
