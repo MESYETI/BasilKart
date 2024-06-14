@@ -53,7 +53,7 @@ static void Init(void) {
 	GFX_LoadImage(&map.skybox, "assets/sky.bmp");
 	GFX_LoadImage(&map.clouds, "assets/clouds.bmp");
 
-	camera.pos  = (FVec3) {10.0, 16.0, 0.5};
+	camera.pos  = (FVec3) {13.0, 16.0, 0.5};
 	camera.dirH = 0.0;
 	camera.dirV = 0.0;
 
