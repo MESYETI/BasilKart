@@ -1,6 +1,0 @@
-/home/yeti/dev/c/basilkart/misc/vita/CMakeFiles/ycraft-vita.dir
-/home/yeti/dev/c/basilkart/misc/vita/CMakeFiles/ycraft-vita-velf.dir
-/home/yeti/dev/c/basilkart/misc/vita/CMakeFiles/ycraft-vita.self-self.dir
-/home/yeti/dev/c/basilkart/misc/vita/CMakeFiles/ycraft-vita.vpk-vpk.dir
-/home/yeti/dev/c/basilkart/misc/vita/CMakeFiles/edit_cache.dir
-/home/yeti/dev/c/basilkart/misc/vita/CMakeFiles/rebuild_cache.dir
