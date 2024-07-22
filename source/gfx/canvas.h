@@ -2,6 +2,7 @@
 #define BK_GFX_CANVAS
 
 #include "../common.h"
+#include "../types.h"
 
 typedef uint32_t GFX_Pixel;
 
@@ -38,6 +39,8 @@ void        GFX_BlitCanvas(
 );
 void GFX_HLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour);
 void GFX_VLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour);
+void GFX_Line(GFX_Canvas* canvas, Vec2 start, Vec2 end, GFX_Pixel col);
+void GFX_Triangle(GFX_Canvas* canvas, Vec2 p1, Vec2 p2, Vec2 p3, GFX_Pixel col);
 void GFX_DrawRect(GFX_Canvas* canvas, GFX_Rect rect, GFX_Pixel colour);
 
 #endif

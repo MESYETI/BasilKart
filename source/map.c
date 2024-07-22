@@ -45,7 +45,7 @@ void Map_Init(Map* map, int width, int height) {
 
 	for (int x = 0; x < width; ++ x) {
 		for (int y = 0; y < height; ++ y) {
-			if (x == 14) {
+			if (x == 4) {
 				Map_GetTile(map, x, y)->id = 1;
 			}
 			else {
@@ -76,6 +76,44 @@ static GFX_Pixel FogifyPixel(GFX_Pixel pixel, double distance) {
 	fog  = 1 - fog;
 	fog *= fog;
 	return GFX_LerpPixel(fogColour, pixel, fog);
+}
+
+// just for testing stuff
+Vec2 Map_3DTo2D(Camera camera, FVec3 pos) {
+	double angle  = atan2(pos.y - camera.pos.y, pos.x - camera.pos.x);
+	angle        -= camera.dirH;
+
+	while (angle <  DegToRad(-180)) angle += DegToRad(360);
+	while (angle >= DegToRad(180))  angle -= DegToRad(360);
+
+	if ((angle > DegToRad(45.0)) || (angle < DegToRad(-45.0))) return (Vec2) {0, 0};
+
+	double distance = sqrt(
+		pow(camera.pos.y - pos.y, 2) + pow(camera.pos.x - pos.x, 2)
+	) * 4;
+
+	int x = (int) RadToDeg(
+		tan(angle) *
+		DegToRad(APP_WIN_WIDTH / 2 / tan(DegToRad(APP_FOV / 2)))
+	) + APP_WIN_WIDTH / 2; // complicated math by lurnie
+
+	// Fix fisheye
+	distance *= cos(rayDirMap[x]);
+
+	double unit = (double) centerY * 2 / distance;
+
+	return (Vec2) {
+		x, round((double) centerY - pos.z * unit) + camera.dirV
+	};
+}
+
+void Map_RenderTriangle(
+	GFX_Canvas* canvas, Camera camera, FVec3 p1, FVec3 p2, FVec3 p3, GFX_Pixel col
+) {
+	GFX_Triangle(
+		canvas, Map_3DTo2D(camera, p1), Map_3DTo2D(camera, p2), Map_3DTo2D(camera, p3),
+		col
+	);
 }
 
 void Map_RenderSprite(GFX_Canvas* canvas, Camera camera, MapSprite* sprite) {
@@ -269,8 +307,20 @@ void Map_Render(Map* map, GFX_Canvas* canvas, Camera camera) {
 
 	sprite.x      = 10.0;
 	sprite.y      = 10.0;
+	sprite.z      = 0.0; // this wasn't here before but it worked fine?
 	sprite.canvas = testSprite;
 	Map_RenderSprite(canvas, camera, &sprite);
+
+	Vec2 pixelPos = Map_3DTo2D(camera, (FVec3) {10.0, 10.0, 0.0});
+	GFX_DrawPixel(canvas, pixelPos.x, pixelPos.y, GFX_ColourToPixel(255, 255, 255, 255));
+
+	Map_RenderTriangle(
+		canvas, camera,
+		(FVec3) {10.0, 10.0, 10.0},
+		(FVec3) {10.5, 10.0, 0.0},
+		(FVec3) {11.0, 10.0, 10.0},
+		0xFFFFFFFF
+	);
 
 	/*if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP])
 		rotY -= 3;

@@ -1,0 +1,7 @@
+# Hashes of file build rules.
+0dc8c484fbb5415f3adee9c01b1def73 CMakeFiles/ycraft-vita-velf
+c6cc2f636d7776557d7f590135383912 CMakeFiles/ycraft-vita.self-self
+a6b1ca1fdfefeb156e7ca5641822712a CMakeFiles/ycraft-vita.vpk-vpk
+bf73500cf35e74b63e921ea2c2e07327 ycraft-vita.self.out
+36f5664cb0abf5cbd3305fca9d8f73f7 ycraft-vita.vpk.out
+0e2ec8be84f96b11db468c560e25d7a6 ycraft-vita.vpk_param.sfo

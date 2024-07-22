@@ -13,4 +13,7 @@ typedef struct {
 	double x, y, z;
 } FVec3;
 
+int GetDistance(Vec2 start, Vec2 end);
+FVec2 LerpVec2(Vec2 start, Vec2 end, double t);
+
 #endif

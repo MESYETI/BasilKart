@@ -112,11 +112,11 @@ void App_Update() {
 		lastFps = app.fps;
 	}
 
-//	GFX_DrawText(&app.font, &app.canvas, "Basil Kart BETA", 1, 1);
-//
-//	char infoText[50];
-	//sprintf(infoText, "FPS: %d", (int) round(lastFps));
-	//GFX_DrawText(&app.font, &app.canvas, infoText, 1, 10);
+	GFX_DrawText(&app.font, &app.canvas, "Basil Kart ALPHA", 1, 1);
+
+	char infoText[50];
+	sprintf(infoText, "FPS: %d", (int) round(lastFps));
+	GFX_DrawText(&app.font, &app.canvas, infoText, 1, 10);
 
 	GFX_RenderScreen(&app.screen, &app.canvas);
 

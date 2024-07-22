@@ -36,6 +36,10 @@ typedef struct {
 
 void     Map_Init(Map* map, int width, int height);
 MapTile* Map_GetTile(Map* map, int x, int y);
+Vec2     Map_3DTo2D(struct Camera camera, FVec3 pos);
+void     Map_RenderTriangle(
+	GFX_Canvas* canvas, struct Camera camera, FVec3 p1, FVec3 p2, FVec3 p3, GFX_Pixel col
+);
 void     Map_RenderSprite(GFX_Canvas* canvas, struct Camera camera, MapSprite* sprite);
 void     Map_Render(Map* map, GFX_Canvas* canvas, struct Camera camera);
 void     Map_Render2D(Map* map, GFX_Canvas* canvas, struct Camera2D camera);

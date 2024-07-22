@@ -3,6 +3,7 @@
 #include "canvas.h"
 #include "../util.h"
 #include "../safe.h"
+#include "../types.h"
 
 void GFX_NewCanvas(GFX_Canvas* canvas, int width, int height) {
 	canvas->width  = width;
@@ -16,6 +17,7 @@ void GFX_FreeCanvas(GFX_Canvas* canvas) {
 
 GFX_Pixel GFX_ColourToPixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	return r | (g << 8) | (b << 16) | (a << 24);
+	//return r + (rand() % 20) | (g + (rand() % 20) << 8) | (b + (rand() % 20) << 16) | (a << 24);
 }
 
 GFX_Colour GFX_PixelToColour(GFX_Pixel colour) {
@@ -158,6 +160,28 @@ void GFX_VLine(GFX_Canvas* canvas, int x, int y, int length, GFX_Pixel colour) {
 	for (int i = 0; i < length; ++ i) {
 		GFX_DrawPixel(canvas, x, y + i, colour);
 	}
+}
+
+void GFX_Line(GFX_Canvas* canvas, Vec2 start, Vec2 end, GFX_Pixel col) {
+	int length = GetDistance(start, end);
+
+	start.x = MAX(start.x, 0);
+	start.y = MAX(start.y, 0);
+	end.x   = MIN(end.x,   canvas->width);
+	end.y   = MIN(end.y,   canvas->height);
+
+	for (int i = 0; i < length; ++ i) {
+		double t      = i == 0? 0.0 : (double) i / (double) length;
+		FVec2  lerped = LerpVec2(start, end, t);
+
+		GFX_DrawPixel(canvas, round(lerped.x), round(lerped.y), col);
+	}
+}
+
+void GFX_Triangle(GFX_Canvas* canvas, Vec2 p1, Vec2 p2, Vec2 p3, GFX_Pixel col) {
+	GFX_Line(canvas, p1, p2, col);
+	GFX_Line(canvas, p2, p3, col);
+	GFX_Line(canvas, p3, p1, col);
 }
 
 void GFX_DrawRect(GFX_Canvas* canvas, GFX_Rect rect, GFX_Pixel colour) {
