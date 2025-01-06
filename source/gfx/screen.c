@@ -30,6 +30,15 @@ void GFX_InitScreen(GFX_Screen* screen, size_t width, size_t height) {
 		);
 	#endif
 
+	/*screen->icon = SDL_LoadBMP("assets/icon.bmp");
+
+	if (screen->icon == NULL) {
+		fprintf(stderr, "Failed to load icon: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	SDL_SetWindowIcon(screen->window, screen->icon);*/
+
 	if (screen->renderer == NULL) {
 		fprintf(stderr, "Failed to create renderer: %s\n", SDL_GetError());
 		exit(1);
@@ -56,6 +65,7 @@ void GFX_FreeScreen(GFX_Screen* screen) {
 	SDL_DestroyTexture(screen->texture);
 	SDL_DestroyRenderer(screen->renderer);
 	SDL_DestroyWindow(screen->window);
+	SDL_FreeSurface(screen->icon);
 	SDL_Quit();
 }
 

@@ -8,6 +8,7 @@ typedef struct {
 	SDL_Window*   window;
 	SDL_Renderer* renderer;
 	SDL_Texture*  texture;
+	SDL_Surface*  icon;
 } GFX_Screen;
 
 void GFX_InitScreen(GFX_Screen* screen, size_t width, size_t height);
